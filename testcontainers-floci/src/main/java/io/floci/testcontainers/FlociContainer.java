@@ -1248,6 +1248,7 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
         this.ec2Config = builder.build();
         configureExposedPorts();
         ec2Config.applyEnvVarsToContainer(this);
+        ec2Config.applyFileMountsToContainer(this);
         return this;
     }
 
