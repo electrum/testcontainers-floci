@@ -129,8 +129,15 @@ class EcrServiceTest extends AbstractServiceTest {
         dockerClient.removeImageCmd(ecrImageRef).exec();
     }
 
+    // Floci (running in a container) reaches its ECR backing registry by container name, but on Docker's default
+    // bridge network there is no embedded DNS, so the lookup fails. Since floci-io/floci#2466 DeleteRepository
+    // aborts with a 500 ("Backing registry unreachable") instead of ignoring that. Running Floci on a dedicated
+    // network fixes the lookup, but breaks the other tests: when Floci attaches itself to an EC2 VPC network
+    // ("floci-aws-vpc-...", which sorts before "floci-network-..."), Docker moves the default gateway and re-maps
+    // the published host ports. Re-enable once that's fixed upstream.
     @Test
     @Order(7)
+    @Disabled("Floci's ECR backing registry is unreachable by container name on Docker's default bridge network")
     void shouldDeleteRepository() {
         ecr.deleteRepository(b -> b.repositoryName(repoName).force(true));
 
