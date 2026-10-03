@@ -199,6 +199,7 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
     private SsoOidcConfig ssoOidcConfig = SsoOidcConfig.builder().build();
     private Macie2Config macie2Config = Macie2Config.builder().build();
     private AccountConfig accountConfig = AccountConfig.builder().build();
+    private AccessAnalyzerConfig accessAnalyzerConfig = AccessAnalyzerConfig.builder().build();
 
     private final List<ServiceConfigAccessor<?>> serviceConfigAccessors = List.<ServiceConfigAccessor<?>>of(
             new ServiceConfigAccessor<>(() -> acmConfig, c -> acmConfig = c),
@@ -309,7 +310,8 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
             new ServiceConfigAccessor<>(() -> sageMakerConfig, c -> sageMakerConfig = c),
             new ServiceConfigAccessor<>(() -> ssoOidcConfig, c -> ssoOidcConfig = c),
             new ServiceConfigAccessor<>(() -> macie2Config, c -> macie2Config = c),
-            new ServiceConfigAccessor<>(() -> accountConfig, c -> accountConfig = c)
+            new ServiceConfigAccessor<>(() -> accountConfig, c -> accountConfig = c),
+            new ServiceConfigAccessor<>(() -> accessAnalyzerConfig, c -> accessAnalyzerConfig = c)
     );
 
     /**
@@ -3964,6 +3966,34 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
         configurer.accept(builder);
         this.accountConfig = builder.build();
         accountConfig.applyEnvVarsToContainer(this);
+        return this;
+    }
+
+    /**
+     * IAM Access Analyzer-specific settings.
+     *
+     * @return the IAM Access Analyzer configuration
+     */
+    public AccessAnalyzerConfig getAccessAnalyzerConfig() {
+        return accessAnalyzerConfig;
+    }
+
+    /**
+     * Configures IAM Access Analyzer-specific settings.
+     *
+     * <pre>{@code
+     * new FlociContainer()
+     *     .withAccessAnalyzerConfig(c -> c.enabled(false));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link AccessAnalyzerConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociContainer withAccessAnalyzerConfig(Consumer<AccessAnalyzerConfig.Builder> configurer) {
+        AccessAnalyzerConfig.Builder builder = accessAnalyzerConfig.toBuilder();
+        configurer.accept(builder);
+        this.accessAnalyzerConfig = builder.build();
+        accessAnalyzerConfig.applyEnvVarsToContainer(this);
         return this;
     }
 
