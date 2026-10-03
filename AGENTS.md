@@ -156,7 +156,7 @@ them onto the new branch.)
 3. **Everything else** — root properties (`port`, `baseUrl`, `defaultRegion`, …), and global sections such as `dns()`,
    `network()`, `auth()`, `security()`, `storage()` (except the overrides above), `tls()`, `protocols()`,
    `duckdb()`, `initHooks()`, `partitions()`, and `default` helper methods — **do not migrate**. Only summarize them
-   for the user (step 7). This applies even when a matching cross-cutting class already exists under `config/`
+   for the user (step 8). This applies even when a matching cross-cutting class already exists under `config/`
    (`TlsConfig`, `StorageConfig`, `DuckDbConfig`, `SecurityConfig`, `ProtocolsConfig`, `AuthConfig`,
    `InitHooksConfig`) — the user decides about those manually.
 
@@ -235,13 +235,46 @@ using conventional commits and a short body explaining the env var(s) and behavi
 Scope = lower-case service name as used in previous commits (`git log --oneline | grep 'feat('` for examples). No
 `Co-Authored-By`/AI attribution trailers (see Conventions).
 
-### Step 6 — Final check
+### Step 6 — Re-check disabled tests
+
+Floci moves fast, so tests that were disabled because the nightly image didn't support something may work by now. Go
+through every disabled test — class- or method-level `@Disabled` in `testcontainers-floci/src/test` — and check whether
+it passes against the freshly pulled `floci/floci:nightly`:
+
+```bash
+grep -rn '@Disabled' testcontainers-floci/src/test
+```
+
+For each hit, remove the `@Disabled` annotation (and the then-unused import) and run just that class:
+
+```bash
+mvn -pl testcontainers-floci test -Dtest=<Service>ServiceTest
+```
+
+- **Passes out of the box** → keep the annotation removed.
+- **Fails, but the fix is small and obvious** (an adjusted assertion, a missing prerequisite resource, a changed
+  request parameter, a longer timeout) → make that change and keep the test enabled. Never "fix" a test by weakening
+  it until it no longer checks what it was written for.
+- **Still fails for a reason outside this repo** (service not registered, Floci bug, Docker-in-Docker limitation) or
+  would need more than a few minor changes → restore `@Disabled`, and update its reason string if the cause changed.
+
+Timebox this step — it is opportunistic, not a requirement for the migration. One or two attempts per test, then move
+on; don't go down a debugging rabbit hole. Tests disabled for being too slow/flaky (e.g. `MwaaServiceTest`) only need
+a quick single run, not repeated attempts.
+
+**Commit** each test class separately, with only that class staged (`git add <path>`), e.g.
+`test(<service>): re-enable <Service>ServiceTest` (or `test(<service>): re-enable <method> test` when only some
+methods were re-enabled), with a short body naming any changes needed to make it pass. A class whose tests all stay
+disabled gets no commit, unless its reason string was updated (`test(<service>): update disabled reason`); otherwise
+revert it with `git checkout -- <path>`.
+
+### Step 7 — Final check
 
 After all services are migrated run the full build once (`mvn verify`, Docker required) and report any failures
 honestly, distinguishing failures caused by the migration from pre-existing/flaky ones. Do not push or open a PR unless
 the user asks.
 
-### Step 7 — Report to the user
+### Step 8 — Report to the user
 
 Finish with a report containing:
 
@@ -250,7 +283,9 @@ Finish with a report containing:
 2. **Services migrated**: one line per commit (service, properties added/changed, commit SHA).
 3. **Skipped / needs a decision**: removed or renamed properties, anything that couldn't be mapped cleanly, disabled
    service tests, untouched Floci services that still have no config class here.
-4. **Global (non-service) config changes — not migrated**: for each changed section outside `ServicesConfig` (excluding
+4. **Disabled tests re-checked** (step 6): one line per re-enabled test class (what, if anything, had to change,
+   commit SHA), and the tests that stay disabled with the reason they still fail.
+5. **Global (non-service) config changes — not migrated**: for each changed section outside `ServicesConfig` (excluding
    `ServiceStorageOverrides`): the property path and env var (`floci.dns.spoof-aws-endpoints` /
    `FLOCI_DNS_SPOOF_AWS_ENDPOINTS`), added/removed/changed default/relocated, a one-sentence description of what it
    does, and whether a matching class already exists in `config/` (so it would be an extension rather than a new
