@@ -83,6 +83,7 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     private final ServiceConfigRef<RedisConfig> redisConfig = registerServiceConfig(RedisConfig.builder().build());
     private final ServiceConfigRef<AcrConfig> acrConfig = registerServiceConfig(AcrConfig.builder().build());
     private final ServiceConfigRef<MonitorConfig> monitorConfig = registerServiceConfig(MonitorConfig.builder().build());
+    private final ServiceConfigRef<EntraConfig> entraConfig = registerServiceConfig(EntraConfig.builder().build());
     private final ServiceConfigRef<GraphConfig> graphConfig = registerServiceConfig(GraphConfig.builder().build());
     private final ServiceConfigRef<NetworkConfig> networkConfig = registerServiceConfig(NetworkConfig.builder().build());
     private final ServiceConfigRef<EmailConfig> emailConfig = registerServiceConfig(EmailConfig.builder().build());
@@ -123,6 +124,17 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     protected void applyGlobalEnvVars() {
         tlsConfig.applyEnvVarsToContainer(this);
         authConfig.applyEnvVarsToContainer(this);
+    }
+
+    /**
+     * Returns the id of the default Microsoft Entra ID tenant, as configured via
+     * {@link EntraConfig.Builder#defaultTenantId(String)}. Tokens requested for the {@code common},
+     * {@code organizations} and {@code consumers} tenants are issued for this tenant.
+     *
+     * @return the default tenant id
+     */
+    public String getTenantId() {
+        return getEntraConfig().getDefaultTenantId();
     }
 
     /**
@@ -773,6 +785,29 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
      */
     public FlociAzContainer withMonitorConfig(Consumer<MonitorConfig.Builder> configurer) {
         return updateServiceConfig(monitorConfig, configurer);
+    }
+    /**
+     * Returns the Microsoft Entra ID configuration.
+     *
+     * @return the Entra ID configuration
+     */
+    public EntraConfig getEntraConfig() {
+        return entraConfig.get();
+    }
+
+    /**
+     * Configures Microsoft Entra ID.
+     *
+     * <pre>{@code
+     * new FlociAzContainer()
+     *     .withEntraConfig(c -> c.validateTokens(true));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link EntraConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociAzContainer withEntraConfig(Consumer<EntraConfig.Builder> configurer) {
+        return updateServiceConfig(entraConfig, configurer);
     }
     /**
      * Returns the Microsoft Graph configuration.

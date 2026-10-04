@@ -141,10 +141,22 @@ abstract class AbstractServiceTest {
      * Same as {@link #rest(FlociAzContainer, String, String, String)}, but with the given bearer token.
      */
     protected static RestResponse rest(FlociAzContainer container, String method, String path, String body, String bearerToken) {
+        return rest(container, method, path, body, bearerToken, "application/json");
+    }
+
+    /**
+     * Posts an {@code application/x-www-form-urlencoded} body (e.g. an OAuth2 token request) to the given container.
+     */
+    protected static RestResponse restForm(FlociAzContainer container, String path, String formBody) {
+        return rest(container, "POST", path, formBody, "test-token", "application/x-www-form-urlencoded");
+    }
+
+    private static RestResponse rest(FlociAzContainer container, String method, String path, String body, String bearerToken,
+                                     String contentType) {
         java.net.http.HttpRequest.Builder request = java.net.http.HttpRequest.newBuilder(URI.create(container.getEndpoint() + path))
                 .header("Authorization", "Bearer " + bearerToken);
         if (body != null) {
-            request.header("Content-Type", "application/json")
+            request.header("Content-Type", contentType)
                     .method(method, java.net.http.HttpRequest.BodyPublishers.ofString(body));
         } else {
             request.method(method, java.net.http.HttpRequest.BodyPublishers.noBody());

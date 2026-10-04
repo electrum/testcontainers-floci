@@ -58,6 +58,17 @@ class FlociAzContainerTest {
     }
 
     @Test
+    void shouldReturnTenantIdOfEntraConfig() {
+        try (FlociAzContainer container = new FlociAzContainer()) {
+            assertThat(container.getTenantId()).isEqualTo("00000000-0000-0000-0000-000000000002");
+
+            container.withEntraConfig(c -> c.defaultTenantId("11111111-1111-1111-1111-111111111111"));
+
+            assertThat(container.getTenantId()).isEqualTo("11111111-1111-1111-1111-111111111111");
+        }
+    }
+
+    @Test
     void shouldDisableAllServices() {
         try (FlociAzContainer container = new FlociAzContainer().disableAllServices()) {
             assertThat(List.<AbstractServiceConfig<?>>of(
@@ -82,6 +93,7 @@ class FlociAzContainerTest {
                     container.getRedisConfig(),
                     container.getAcrConfig(),
                     container.getMonitorConfig(),
+                    container.getEntraConfig(),
                     container.getGraphConfig(),
                     container.getNetworkConfig(),
                     container.getEmailConfig()

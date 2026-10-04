@@ -201,6 +201,13 @@ class FlociAzContainerServicesConfigTest {
                 "FLOCI_AZ_SERVICES_MONITOR_ENABLED", "false");
     }
     @Test
+    void shouldWireEntraConfigIntoContainer() {
+        assertConfigWired(
+                c -> c.withEntraConfig(cfg -> cfg.validateTokens(true)),
+                c -> c.getEntraConfig().isValidateTokens(), true,
+                "FLOCI_AZ_SERVICES_ENTRA_VALIDATE_TOKENS", "true");
+    }
+    @Test
     void shouldWireGraphConfigIntoContainer() {
         assertConfigWired(
                 c -> c.withGraphConfig(cfg -> cfg.enabled(false)),
