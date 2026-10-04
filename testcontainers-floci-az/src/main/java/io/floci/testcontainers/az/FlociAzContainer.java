@@ -62,6 +62,7 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     private AuthConfig authConfig = AuthConfig.builder().build();
 
     // Service configs
+    private final ServiceConfigRef<BlobConfig> blobConfig = registerServiceConfig(BlobConfig.builder().build());
     private final ServiceConfigRef<QueueConfig> queueConfig = registerServiceConfig(QueueConfig.builder().build());
     private final ServiceConfigRef<TableConfig> tableConfig = registerServiceConfig(TableConfig.builder().build());
     private final ServiceConfigRef<AppConfigConfig> appConfigConfig = registerServiceConfig(AppConfigConfig.builder().build());
@@ -273,6 +274,29 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
                 + ";";
     }
 
+    /**
+     * Returns the Azure Blob Storage configuration.
+     *
+     * @return the Blob Storage configuration
+     */
+    public BlobConfig getBlobConfig() {
+        return blobConfig.get();
+    }
+
+    /**
+     * Configures Azure Blob Storage.
+     *
+     * <pre>{@code
+     * new FlociAzContainer()
+     *     .withBlobConfig(c -> c.hierarchicalNamespaceAccounts(List.of("datalake1")));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link BlobConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociAzContainer withBlobConfig(Consumer<BlobConfig.Builder> configurer) {
+        return updateServiceConfig(blobConfig, configurer);
+    }
     /**
      * Returns the Azure Queue Storage configuration.
      *

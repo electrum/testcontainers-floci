@@ -61,6 +61,7 @@ class FlociAzContainerTest {
     void shouldDisableAllServices() {
         try (FlociAzContainer container = new FlociAzContainer().disableAllServices()) {
             assertThat(List.<AbstractServiceConfig<?>>of(
+                    container.getBlobConfig(),
                     container.getQueueConfig(),
                     container.getTableConfig(),
                     container.getAppConfigConfig(),

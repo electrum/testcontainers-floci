@@ -2,6 +2,7 @@ package io.floci.testcontainers.az;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -49,6 +50,13 @@ class FlociAzContainerServicesConfigTest {
 
     // --- Service configs (config/services/) -------------------------------------------------------
 
+    @Test
+    void shouldWireBlobConfigIntoContainer() {
+        assertConfigWired(
+                c -> c.withBlobConfig(cfg -> cfg.hierarchicalNamespaceAccounts(List.of("datalake1"))),
+                c -> c.getBlobConfig().getHierarchicalNamespaceAccounts(), List.of("datalake1"),
+                "FLOCI_AZ_SERVICES_BLOB_HIERARCHICAL_NAMESPACE_ACCOUNTS", "datalake1");
+    }
     @Test
     void shouldWireQueueConfigIntoContainer() {
         assertConfigWired(
