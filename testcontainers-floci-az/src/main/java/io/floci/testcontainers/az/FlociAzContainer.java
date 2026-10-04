@@ -70,6 +70,7 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     private final ServiceConfigRef<SignalRConfig> signalRConfig = registerServiceConfig(SignalRConfig.builder().build());
     private final ServiceConfigRef<CosmosConfig> cosmosConfig = registerServiceConfig(CosmosConfig.builder().build());
     private final ServiceConfigRef<KeyVaultConfig> keyVaultConfig = registerServiceConfig(KeyVaultConfig.builder().build());
+    private final ServiceConfigRef<EventHubConfig> eventHubConfig = registerServiceConfig(EventHubConfig.builder().build());
     private final ServiceConfigRef<ApimConfig> apimConfig = registerServiceConfig(ApimConfig.builder().build());
     private final ServiceConfigRef<MonitorConfig> monitorConfig = registerServiceConfig(MonitorConfig.builder().build());
     private final ServiceConfigRef<GraphConfig> graphConfig = registerServiceConfig(GraphConfig.builder().build());
@@ -463,6 +464,29 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
      */
     public FlociAzContainer withKeyVaultConfig(Consumer<KeyVaultConfig.Builder> configurer) {
         return updateServiceConfig(keyVaultConfig, configurer);
+    }
+    /**
+     * Returns the Azure Event Hubs configuration.
+     *
+     * @return the Event Hubs configuration
+     */
+    public EventHubConfig getEventHubConfig() {
+        return eventHubConfig.get();
+    }
+
+    /**
+     * Configures Azure Event Hubs, which runs its brokers in sibling containers and therefore requires the Docker socket unless mocked.
+     *
+     * <pre>{@code
+     * new FlociAzContainer()
+     *     .withEventHubConfig(c -> c.mocked(true));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link EventHubConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociAzContainer withEventHubConfig(Consumer<EventHubConfig.Builder> configurer) {
+        return updateServiceConfig(eventHubConfig, configurer);
     }
     /**
      * Returns the Azure API Management configuration.

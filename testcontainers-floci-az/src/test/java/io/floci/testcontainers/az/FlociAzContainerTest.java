@@ -69,6 +69,7 @@ class FlociAzContainerTest {
                     container.getSignalRConfig(),
                     container.getCosmosConfig(),
                     container.getKeyVaultConfig(),
+                    container.getEventHubConfig(),
                     container.getApimConfig(),
                     container.getMonitorConfig(),
                     container.getGraphConfig(),

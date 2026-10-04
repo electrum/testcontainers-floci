@@ -110,6 +110,13 @@ class FlociAzContainerServicesConfigTest {
                 "FLOCI_AZ_SERVICES_KEY_VAULT_ENABLED", "false");
     }
     @Test
+    void shouldWireEventHubConfigIntoContainer() {
+        assertConfigWired(
+                c -> c.withEventHubConfig(cfg -> cfg.mocked(true)),
+                c -> c.getEventHubConfig().isMocked(), true,
+                "FLOCI_AZ_SERVICES_EVENT_HUB_MOCKED", "true");
+    }
+    @Test
     void shouldWireApimConfigIntoContainer() {
         assertConfigWired(
                 c -> c.withApimConfig(cfg -> cfg.enabled(false)),
