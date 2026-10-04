@@ -19,8 +19,8 @@ body:
     id: floci-image
     attributes:
       label: Floci Docker image
-      description: The `floci/floci` image tag in use, if you overrode the default.
-      placeholder: "e.g. floci/floci:latest or floci/floci:1.5.15"
+      description: The Floci image tag in use (`floci/floci` or `floci/floci-az`), if you overrode the default.
+      placeholder: "e.g. floci/floci:latest, floci/floci:1.5.15 or floci/floci-az:0.13.0"
 
   - type: input
     id: java-version
@@ -36,6 +36,8 @@ body:
       label: Affected module
       options:
         - testcontainers-floci
+        - testcontainers-floci-az
+        - testcontainers-floci-core
     validations:
       required: true
 
@@ -53,7 +55,7 @@ body:
       label: Steps to reproduce
       description: Minimal steps or a code snippet that reproduces the issue.
       placeholder: |
-        1. Create a FlociContainer with ...
+        1. Create a FlociContainer / FlociAzContainer with ...
         2. Call ...
         3. See error ...
     validations:
