@@ -89,6 +89,7 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     private final ServiceConfigRef<NetworkConfig> networkConfig = registerServiceConfig(NetworkConfig.builder().build());
     private final ServiceConfigRef<EventGridConfig> eventGridConfig = registerServiceConfig(EventGridConfig.builder().build());
     private final ServiceConfigRef<ManagedIdentityConfig> managedIdentityConfig = registerServiceConfig(ManagedIdentityConfig.builder().build());
+    private final ServiceConfigRef<ContainerAppsConfig> containerAppsConfig = registerServiceConfig(ContainerAppsConfig.builder().build());
     private final ServiceConfigRef<EmailConfig> emailConfig = registerServiceConfig(EmailConfig.builder().build());
 
     /**
@@ -937,6 +938,29 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
      */
     public FlociAzContainer withManagedIdentityConfig(Consumer<ManagedIdentityConfig.Builder> configurer) {
         return updateServiceConfig(managedIdentityConfig, configurer);
+    }
+    /**
+     * Returns the Azure Container Apps configuration.
+     *
+     * @return the Container Apps configuration
+     */
+    public ContainerAppsConfig getContainerAppsConfig() {
+        return containerAppsConfig.get();
+    }
+
+    /**
+     * Configures Azure Container Apps, which requires the Docker socket unless mocked (the default).
+     *
+     * <pre>{@code
+     * new FlociAzContainer()
+     *     .withContainerAppsConfig(c -> c.mocked(false));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link ContainerAppsConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociAzContainer withContainerAppsConfig(Consumer<ContainerAppsConfig.Builder> configurer) {
+        return updateServiceConfig(containerAppsConfig, configurer);
     }
     /**
      * Returns the Azure Communication Services Email configuration.

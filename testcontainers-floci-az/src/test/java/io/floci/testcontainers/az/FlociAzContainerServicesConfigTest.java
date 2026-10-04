@@ -244,6 +244,13 @@ class FlociAzContainerServicesConfigTest {
                 "FLOCI_AZ_SERVICES_MANAGED_IDENTITY_SYSTEM_ASSIGNED_SCOPE", "subscriptions/sub/resourceGroups/rg");
     }
     @Test
+    void shouldWireContainerAppsConfigIntoContainer() {
+        assertConfigWired(
+                c -> c.withContainerAppsConfig(cfg -> cfg.mocked(false)),
+                c -> c.getContainerAppsConfig().isMocked(), false,
+                "FLOCI_AZ_SERVICES_CONTAINER_APPS_MOCKED", "false");
+    }
+    @Test
     void shouldWireEmailConfigIntoContainer() {
         assertConfigWired(
                 c -> c.withEmailConfig(cfg -> cfg.enabled(false)),
