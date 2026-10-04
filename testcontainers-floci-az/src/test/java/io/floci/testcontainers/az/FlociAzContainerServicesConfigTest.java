@@ -229,6 +229,13 @@ class FlociAzContainerServicesConfigTest {
                 "FLOCI_AZ_SERVICES_NETWORK_ENABLED", "false");
     }
     @Test
+    void shouldWireEventGridConfigIntoContainer() {
+        assertConfigWired(
+                c -> c.withEventGridConfig(cfg -> cfg.maxDeliveryAttempts(5)),
+                c -> c.getEventGridConfig().getMaxDeliveryAttempts(), 5,
+                "FLOCI_AZ_SERVICES_EVENT_GRID_MAX_DELIVERY_ATTEMPTS", "5");
+    }
+    @Test
     void shouldWireEmailConfigIntoContainer() {
         assertConfigWired(
                 c -> c.withEmailConfig(cfg -> cfg.enabled(false)),

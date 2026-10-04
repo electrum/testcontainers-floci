@@ -87,6 +87,7 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     private final ServiceConfigRef<GraphConfig> graphConfig = registerServiceConfig(GraphConfig.builder().build());
     private final ServiceConfigRef<ArmConfig> armConfig = registerServiceConfig(ArmConfig.builder().build());
     private final ServiceConfigRef<NetworkConfig> networkConfig = registerServiceConfig(NetworkConfig.builder().build());
+    private final ServiceConfigRef<EventGridConfig> eventGridConfig = registerServiceConfig(EventGridConfig.builder().build());
     private final ServiceConfigRef<EmailConfig> emailConfig = registerServiceConfig(EmailConfig.builder().build());
 
     /**
@@ -889,6 +890,29 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
      */
     public FlociAzContainer withNetworkConfig(Consumer<NetworkConfig.Builder> configurer) {
         return updateServiceConfig(networkConfig, configurer);
+    }
+    /**
+     * Returns the Azure Event Grid configuration.
+     *
+     * @return the Event Grid configuration
+     */
+    public EventGridConfig getEventGridConfig() {
+        return eventGridConfig.get();
+    }
+
+    /**
+     * Configures Azure Event Grid.
+     *
+     * <pre>{@code
+     * new FlociAzContainer()
+     *     .withEventGridConfig(c -> c.maxDeliveryAttempts(5));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link EventGridConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociAzContainer withEventGridConfig(Consumer<EventGridConfig.Builder> configurer) {
+        return updateServiceConfig(eventGridConfig, configurer);
     }
     /**
      * Returns the Azure Communication Services Email configuration.
