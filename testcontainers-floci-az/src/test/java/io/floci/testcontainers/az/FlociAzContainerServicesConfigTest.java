@@ -145,6 +145,13 @@ class FlociAzContainerServicesConfigTest {
                 "FLOCI_AZ_SERVICES_MARIA_DB_MOCKED", "true");
     }
     @Test
+    void shouldWireServiceBusConfigIntoContainer() {
+        assertConfigWired(
+                c -> c.withServiceBusConfig(cfg -> cfg.mocked(false)),
+                c -> c.getServiceBusConfig().isMocked(), false,
+                "FLOCI_AZ_SERVICES_SERVICE_BUS_MOCKED", "false");
+    }
+    @Test
     void shouldWireApimConfigIntoContainer() {
         assertConfigWired(
                 c -> c.withApimConfig(cfg -> cfg.enabled(false)),

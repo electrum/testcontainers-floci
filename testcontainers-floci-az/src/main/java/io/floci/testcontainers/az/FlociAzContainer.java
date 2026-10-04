@@ -75,6 +75,7 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     private final ServiceConfigRef<PostgresConfig> postgresConfig = registerServiceConfig(PostgresConfig.builder().build());
     private final ServiceConfigRef<MySqlConfig> mySqlConfig = registerServiceConfig(MySqlConfig.builder().build());
     private final ServiceConfigRef<MariaDbConfig> mariaDbConfig = registerServiceConfig(MariaDbConfig.builder().build());
+    private final ServiceConfigRef<ServiceBusConfig> serviceBusConfig = registerServiceConfig(ServiceBusConfig.builder().build());
     private final ServiceConfigRef<ApimConfig> apimConfig = registerServiceConfig(ApimConfig.builder().build());
     private final ServiceConfigRef<MonitorConfig> monitorConfig = registerServiceConfig(MonitorConfig.builder().build());
     private final ServiceConfigRef<GraphConfig> graphConfig = registerServiceConfig(GraphConfig.builder().build());
@@ -583,6 +584,29 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
      */
     public FlociAzContainer withMariaDbConfig(Consumer<MariaDbConfig.Builder> configurer) {
         return updateServiceConfig(mariaDbConfig, configurer);
+    }
+    /**
+     * Returns the Azure Service Bus configuration.
+     *
+     * @return the Service Bus configuration
+     */
+    public ServiceBusConfig getServiceBusConfig() {
+        return serviceBusConfig.get();
+    }
+
+    /**
+     * Configures Azure Service Bus, which requires the Docker socket unless mocked (the default).
+     *
+     * <pre>{@code
+     * new FlociAzContainer()
+     *     .withServiceBusConfig(c -> c.mocked(false));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link ServiceBusConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociAzContainer withServiceBusConfig(Consumer<ServiceBusConfig.Builder> configurer) {
+        return updateServiceConfig(serviceBusConfig, configurer);
     }
     /**
      * Returns the Azure API Management configuration.
