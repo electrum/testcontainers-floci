@@ -1,10 +1,18 @@
 package io.floci.testcontainers.az;
 
+import io.floci.testcontainers.az.config.TlsConfig;
 import io.floci.testcontainers.core.AbstractFlociContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.function.Consumer;
 
 /**
  * Testcontainers module for <a href="https://github.com/floci-io/floci-az">Floci Azure</a> — a
@@ -42,10 +50,13 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     private static final String LOG_LEVEL_ENV_VAR = "QUARKUS_LOG_CATEGORY__IO_FLOCI_AZ__LEVEL";
     private static final String DOCKER_NETWORK_ENV_VAR = "FLOCI_AZ_SERVICES_DOCKER_NETWORK";
     private static final String HEALTH_PATH = "/_floci/health";
+    private static final String TLS_CERT_PATH = "/_floci/tls-cert";
 
     private static final String DEFAULT_ACCOUNT_NAME = "devstoreaccount1";
     private static final String DEFAULT_ACCOUNT_KEY =
             "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==";
+
+    private TlsConfig tlsConfig = TlsConfig.builder().build();
 
     /**
      * Creates a new Floci Azure container with the default image ({@code floci/floci-az:latest}).
@@ -77,6 +88,78 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
                 .withStartupTimeout(Duration.ofSeconds(60)));
 
         applyAllConfigs();
+    }
+
+    @Override
+    protected void applyGlobalEnvVars() {
+        tlsConfig.applyEnvVarsToContainer(this);
+    }
+
+    /**
+     * Returns the HTTPS endpoint URL for connecting to Floci Azure (e.g. {@code https://localhost:32781}).
+     * Floci Azure serves HTTPS on the same port as plain HTTP, but only while TLS is enabled via
+     * {@link #withTlsConfig(Consumer)}. Clients have to trust the certificate returned by
+     * {@link #getTlsCertificate()}.
+     *
+     * @return the HTTPS endpoint URL
+     */
+    public String getHttpsEndpoint() {
+        return String.format("https://%s:%d", getHost(), getMappedPort(PORT));
+    }
+
+    /**
+     * Fetches the PEM-encoded certificate Floci Azure currently serves HTTPS with (either the
+     * auto-generated one or the one configured via {@link TlsConfig.Builder#certPath(String)}).
+     * Import it into the trust store of HTTPS clients such as the Cosmos DB or Key Vault SDKs.
+     *
+     * @return the PEM-encoded TLS certificate
+     * @throws IllegalStateException if TLS is not enabled or the certificate is not available
+     */
+    public String getTlsCertificate() {
+        try {
+            HttpResponse<String> response = HttpClient.newHttpClient().send(
+                    HttpRequest.newBuilder(URI.create(getEndpoint() + TLS_CERT_PATH)).build(),
+                    HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() != 200) {
+                throw new IllegalStateException("TLS certificate not available (HTTP " + response.statusCode()
+                        + "): " + response.body());
+            }
+            return response.body();
+        } catch (IOException e) {
+            throw new UncheckedIOException("Failed to fetch the TLS certificate of Floci Azure", e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Interrupted while fetching the TLS certificate of Floci Azure", e);
+        }
+    }
+
+    /**
+     * Returns the TLS configuration.
+     *
+     * @return the TLS configuration
+     */
+    public TlsConfig getTlsConfig() {
+        return tlsConfig;
+    }
+
+    /**
+     * Configures TLS/HTTPS for the Floci Azure server. When enabled, HTTP and HTTPS are served on the same
+     * port; use {@link #getHttpsEndpoint()} and trust {@link #getTlsCertificate()} in HTTPS clients.
+     *
+     * <pre>{@code
+     * new FlociAzContainer()
+     *     .withTlsConfig(c -> c.enabled(true));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link TlsConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociAzContainer withTlsConfig(Consumer<TlsConfig.Builder> configurer) {
+        TlsConfig.Builder builder = tlsConfig.toBuilder();
+        configurer.accept(builder);
+        this.tlsConfig = builder.build();
+        tlsConfig.applyEnvVarsToContainer(this);
+        return this;
     }
 
     /**
