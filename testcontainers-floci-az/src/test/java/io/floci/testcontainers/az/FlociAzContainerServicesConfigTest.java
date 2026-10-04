@@ -117,6 +117,13 @@ class FlociAzContainerServicesConfigTest {
                 "FLOCI_AZ_SERVICES_EVENT_HUB_MOCKED", "true");
     }
     @Test
+    void shouldWireSqlConfigIntoContainer() {
+        assertConfigWired(
+                c -> c.withSqlConfig(cfg -> cfg.acceptEula("Y")),
+                c -> c.getSqlConfig().getAcceptEula(), "Y",
+                "FLOCI_AZ_SERVICES_SQL_ACCEPT_EULA", "Y");
+    }
+    @Test
     void shouldWireApimConfigIntoContainer() {
         assertConfigWired(
                 c -> c.withApimConfig(cfg -> cfg.enabled(false)),
