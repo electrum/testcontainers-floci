@@ -187,6 +187,13 @@ class FlociAzContainerServicesConfigTest {
                 "FLOCI_AZ_SERVICES_REDIS_MOCKED", "true");
     }
     @Test
+    void shouldWireAcrConfigIntoContainer() {
+        assertConfigWired(
+                c -> c.withAcrConfig(cfg -> cfg.mocked(true)),
+                c -> c.getAcrConfig().isMocked(), true,
+                "FLOCI_AZ_SERVICES_ACR_MOCKED", "true");
+    }
+    @Test
     void shouldWireMonitorConfigIntoContainer() {
         assertConfigWired(
                 c -> c.withMonitorConfig(cfg -> cfg.enabled(false)),
