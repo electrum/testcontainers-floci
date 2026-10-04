@@ -65,6 +65,9 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     private final ServiceConfigRef<QueueConfig> queueConfig = registerServiceConfig(QueueConfig.builder().build());
     private final ServiceConfigRef<TableConfig> tableConfig = registerServiceConfig(TableConfig.builder().build());
     private final ServiceConfigRef<AppConfigConfig> appConfigConfig = registerServiceConfig(AppConfigConfig.builder().build());
+    private final ServiceConfigRef<KeyVaultConfig> keyVaultConfig = registerServiceConfig(KeyVaultConfig.builder().build());
+    private final ServiceConfigRef<MonitorConfig> monitorConfig = registerServiceConfig(MonitorConfig.builder().build());
+    private final ServiceConfigRef<GraphConfig> graphConfig = registerServiceConfig(GraphConfig.builder().build());
     private final ServiceConfigRef<EmailConfig> emailConfig = registerServiceConfig(EmailConfig.builder().build());
 
     /**
@@ -340,6 +343,75 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
         return updateServiceConfig(appConfigConfig, configurer);
     }
 
+    /**
+     * Returns the Azure Key Vault configuration.
+     *
+     * @return the Key Vault configuration
+     */
+    public KeyVaultConfig getKeyVaultConfig() {
+        return keyVaultConfig.get();
+    }
+
+    /**
+     * Configures Azure Key Vault.
+     *
+     * <pre>{@code
+     * new FlociAzContainer()
+     *     .withKeyVaultConfig(c -> c.enabled(false));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link KeyVaultConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociAzContainer withKeyVaultConfig(Consumer<KeyVaultConfig.Builder> configurer) {
+        return updateServiceConfig(keyVaultConfig, configurer);
+    }
+    /**
+     * Returns the Azure Monitor / Log Analytics configuration.
+     *
+     * @return the Monitor configuration
+     */
+    public MonitorConfig getMonitorConfig() {
+        return monitorConfig.get();
+    }
+
+    /**
+     * Configures Azure Monitor / Log Analytics.
+     *
+     * <pre>{@code
+     * new FlociAzContainer()
+     *     .withMonitorConfig(c -> c.enabled(false));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link MonitorConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociAzContainer withMonitorConfig(Consumer<MonitorConfig.Builder> configurer) {
+        return updateServiceConfig(monitorConfig, configurer);
+    }
+    /**
+     * Returns the Microsoft Graph configuration.
+     *
+     * @return the Graph configuration
+     */
+    public GraphConfig getGraphConfig() {
+        return graphConfig.get();
+    }
+
+    /**
+     * Configures Microsoft Graph.
+     *
+     * <pre>{@code
+     * new FlociAzContainer()
+     *     .withGraphConfig(c -> c.enabled(false));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link GraphConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociAzContainer withGraphConfig(Consumer<GraphConfig.Builder> configurer) {
+        return updateServiceConfig(graphConfig, configurer);
+    }
     /**
      * Returns the Azure Communication Services Email configuration.
      *

@@ -12,6 +12,10 @@
     <name>Testcontainers Floci Azure</name>
     <description>Testcontainers module for Floci Azure — a free, open-source local Azure emulator</description>
 
+    <properties>
+        <jackson.version>2.22.3</jackson.version>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -67,6 +71,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-core-http-jdk-httpclient</artifactId>
             <scope>test</scope>
@@ -94,6 +104,11 @@
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-communication-email</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-security-keyvault-secrets</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

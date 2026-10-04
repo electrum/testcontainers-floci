@@ -6,6 +6,9 @@ import com.azure.core.http.HttpPipelineNextPolicy;
 import com.azure.core.http.HttpResponse;
 import com.azure.core.http.jdk.httpclient.JdkHttpClientBuilder;
 import com.azure.core.http.policy.HttpPipelinePolicy;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.floci.testcontainers.az.FlociAzContainer;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
@@ -15,6 +18,7 @@ import reactor.core.publisher.Mono;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -23,6 +27,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
+import java.util.UUID;
 
 /**
  * Base class for Floci Azure service integration tests. Provides a shared {@link FlociAzContainer}
@@ -37,6 +42,11 @@ abstract class AbstractServiceTest {
     private static final boolean DEBUG_LOGGING = false;
 
     protected static final FlociAzContainer floci;
+
+    protected static final String SUBSCRIPTION_ID = "00000000-0000-0000-0000-000000000001";
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final java.net.http.HttpClient REST_CLIENT = java.net.http.HttpClient.newHttpClient();
 
     private static SSLContext sslContext;
 
@@ -89,11 +99,71 @@ abstract class AbstractServiceTest {
                 trustManagerFactory.init(trustStore);
                 sslContext = SSLContext.getInstance("TLS");
                 sslContext.init(null, trustManagerFactory.getTrustManagers(), null);
-            } catch (GeneralSecurityException | java.io.IOException e) {
+            } catch (GeneralSecurityException | IOException e) {
                 throw new IllegalStateException("Failed to trust the TLS certificate of Floci Azure", e);
             }
         }
         return sslContext;
+    }
+
+    /**
+     * Creates a new resource group in the default subscription and returns its ARM path
+     * ({@code /subscriptions/{id}/resourceGroups/{name}}).
+     */
+    protected static String createResourceGroup() {
+        String path = "/subscriptions/" + SUBSCRIPTION_ID + "/resourceGroups/rg-" + UUID.randomUUID().toString().substring(0, 8);
+        RestResponse response = rest("PUT", path + "?api-version=2021-04-01", "{\"location\":\"eastus\"}");
+        if (!response.isSuccessful()) {
+            throw new IllegalStateException("Failed to create resource group: " + response);
+        }
+        return path;
+    }
+
+    /**
+     * Sends a plain REST request (e.g. to the ARM management plane) to the Floci Azure container.
+     *
+     * @param method the HTTP method
+     * @param path   the path including query string, relative to {@link FlociAzContainer#getEndpoint()}
+     * @param body   the JSON request body, or {@code null} for none
+     */
+    protected static RestResponse rest(String method, String path, String body) {
+        java.net.http.HttpRequest.Builder request = java.net.http.HttpRequest.newBuilder(URI.create(floci.getEndpoint() + path))
+                .header("Authorization", "Bearer test-token");
+        if (body != null) {
+            request.header("Content-Type", "application/json")
+                    .method(method, java.net.http.HttpRequest.BodyPublishers.ofString(body));
+        } else {
+            request.method(method, java.net.http.HttpRequest.BodyPublishers.noBody());
+        }
+
+        try {
+            java.net.http.HttpResponse<String> response = REST_CLIENT.send(request.build(),
+                    java.net.http.HttpResponse.BodyHandlers.ofString());
+            return new RestResponse(response.statusCode(), response.body());
+        } catch (IOException e) {
+            throw new IllegalStateException("REST call " + method + " " + path + " failed", e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("REST call " + method + " " + path + " interrupted", e);
+        }
+    }
+
+    /**
+     * Status and body of a {@link #rest(String, String, String)} call.
+     */
+    protected record RestResponse(int status, String body) {
+
+        boolean isSuccessful() {
+            return status >= 200 && status < 300;
+        }
+
+        JsonNode json() {
+            try {
+                return MAPPER.readTree(body);
+            } catch (JsonProcessingException e) {
+                throw new IllegalStateException("Response is not JSON: " + body, e);
+            }
+        }
     }
 
     private static final class RedirectFlociBaseUrlPolicy implements HttpPipelinePolicy {

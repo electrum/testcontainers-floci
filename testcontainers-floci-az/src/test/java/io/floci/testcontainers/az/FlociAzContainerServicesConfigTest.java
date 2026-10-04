@@ -74,6 +74,27 @@ class FlociAzContainerServicesConfigTest {
     }
 
     @Test
+    void shouldWireKeyVaultConfigIntoContainer() {
+        assertConfigWired(
+                c -> c.withKeyVaultConfig(cfg -> cfg.enabled(false)),
+                c -> c.getKeyVaultConfig().isEnabled(), false,
+                "FLOCI_AZ_SERVICES_KEY_VAULT_ENABLED", "false");
+    }
+    @Test
+    void shouldWireMonitorConfigIntoContainer() {
+        assertConfigWired(
+                c -> c.withMonitorConfig(cfg -> cfg.enabled(false)),
+                c -> c.getMonitorConfig().isEnabled(), false,
+                "FLOCI_AZ_SERVICES_MONITOR_ENABLED", "false");
+    }
+    @Test
+    void shouldWireGraphConfigIntoContainer() {
+        assertConfigWired(
+                c -> c.withGraphConfig(cfg -> cfg.enabled(false)),
+                c -> c.getGraphConfig().isEnabled(), false,
+                "FLOCI_AZ_SERVICES_GRAPH_ENABLED", "false");
+    }
+    @Test
     void shouldWireEmailConfigIntoContainer() {
         assertConfigWired(
                 c -> c.withEmailConfig(cfg -> cfg.enabled(false)),
