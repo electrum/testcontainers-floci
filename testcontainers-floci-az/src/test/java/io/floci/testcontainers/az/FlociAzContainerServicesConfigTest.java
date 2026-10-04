@@ -81,6 +81,13 @@ class FlociAzContainerServicesConfigTest {
                 "FLOCI_AZ_SERVICES_KEY_VAULT_ENABLED", "false");
     }
     @Test
+    void shouldWireApimConfigIntoContainer() {
+        assertConfigWired(
+                c -> c.withApimConfig(cfg -> cfg.enabled(false)),
+                c -> c.getApimConfig().isEnabled(), false,
+                "FLOCI_AZ_SERVICES_APIM_ENABLED", "false");
+    }
+    @Test
     void shouldWireMonitorConfigIntoContainer() {
         assertConfigWired(
                 c -> c.withMonitorConfig(cfg -> cfg.enabled(false)),
@@ -93,6 +100,13 @@ class FlociAzContainerServicesConfigTest {
                 c -> c.withGraphConfig(cfg -> cfg.enabled(false)),
                 c -> c.getGraphConfig().isEnabled(), false,
                 "FLOCI_AZ_SERVICES_GRAPH_ENABLED", "false");
+    }
+    @Test
+    void shouldWireNetworkConfigIntoContainer() {
+        assertConfigWired(
+                c -> c.withNetworkConfig(cfg -> cfg.enabled(false)),
+                c -> c.getNetworkConfig().isEnabled(), false,
+                "FLOCI_AZ_SERVICES_NETWORK_ENABLED", "false");
     }
     @Test
     void shouldWireEmailConfigIntoContainer() {

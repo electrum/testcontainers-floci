@@ -66,8 +66,10 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     private final ServiceConfigRef<TableConfig> tableConfig = registerServiceConfig(TableConfig.builder().build());
     private final ServiceConfigRef<AppConfigConfig> appConfigConfig = registerServiceConfig(AppConfigConfig.builder().build());
     private final ServiceConfigRef<KeyVaultConfig> keyVaultConfig = registerServiceConfig(KeyVaultConfig.builder().build());
+    private final ServiceConfigRef<ApimConfig> apimConfig = registerServiceConfig(ApimConfig.builder().build());
     private final ServiceConfigRef<MonitorConfig> monitorConfig = registerServiceConfig(MonitorConfig.builder().build());
     private final ServiceConfigRef<GraphConfig> graphConfig = registerServiceConfig(GraphConfig.builder().build());
+    private final ServiceConfigRef<NetworkConfig> networkConfig = registerServiceConfig(NetworkConfig.builder().build());
     private final ServiceConfigRef<EmailConfig> emailConfig = registerServiceConfig(EmailConfig.builder().build());
 
     /**
@@ -367,6 +369,29 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
         return updateServiceConfig(keyVaultConfig, configurer);
     }
     /**
+     * Returns the Azure API Management configuration.
+     *
+     * @return the API Management configuration
+     */
+    public ApimConfig getApimConfig() {
+        return apimConfig.get();
+    }
+
+    /**
+     * Configures Azure API Management.
+     *
+     * <pre>{@code
+     * new FlociAzContainer()
+     *     .withApimConfig(c -> c.enabled(false));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link ApimConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociAzContainer withApimConfig(Consumer<ApimConfig.Builder> configurer) {
+        return updateServiceConfig(apimConfig, configurer);
+    }
+    /**
      * Returns the Azure Monitor / Log Analytics configuration.
      *
      * @return the Monitor configuration
@@ -411,6 +436,29 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
      */
     public FlociAzContainer withGraphConfig(Consumer<GraphConfig.Builder> configurer) {
         return updateServiceConfig(graphConfig, configurer);
+    }
+    /**
+     * Returns the Azure Virtual Network configuration.
+     *
+     * @return the Virtual Network configuration
+     */
+    public NetworkConfig getNetworkConfig() {
+        return networkConfig.get();
+    }
+
+    /**
+     * Configures Azure Virtual Network.
+     *
+     * <pre>{@code
+     * new FlociAzContainer()
+     *     .withNetworkConfig(c -> c.enabled(false));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link NetworkConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociAzContainer withNetworkConfig(Consumer<NetworkConfig.Builder> configurer) {
+        return updateServiceConfig(networkConfig, configurer);
     }
     /**
      * Returns the Azure Communication Services Email configuration.
