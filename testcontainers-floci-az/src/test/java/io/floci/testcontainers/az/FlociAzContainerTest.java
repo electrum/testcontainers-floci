@@ -109,6 +109,7 @@ class FlociAzContainerTest {
                     container.getArmConfig(),
                     container.getNetworkConfig(),
                     container.getEventGridConfig(),
+                    container.getManagedIdentityConfig(),
                     container.getEmailConfig()
             )).noneMatch(AbstractServiceConfig::isEnabled);
         }

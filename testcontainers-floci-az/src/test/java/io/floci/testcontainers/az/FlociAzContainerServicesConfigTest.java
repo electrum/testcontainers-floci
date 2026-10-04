@@ -3,6 +3,7 @@ package io.floci.testcontainers.az;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -234,6 +235,13 @@ class FlociAzContainerServicesConfigTest {
                 c -> c.withEventGridConfig(cfg -> cfg.maxDeliveryAttempts(5)),
                 c -> c.getEventGridConfig().getMaxDeliveryAttempts(), 5,
                 "FLOCI_AZ_SERVICES_EVENT_GRID_MAX_DELIVERY_ATTEMPTS", "5");
+    }
+    @Test
+    void shouldWireManagedIdentityConfigIntoContainer() {
+        assertConfigWired(
+                c -> c.withManagedIdentityConfig(cfg -> cfg.systemAssignedScope("subscriptions/sub/resourceGroups/rg")),
+                c -> c.getManagedIdentityConfig().getSystemAssignedScope(), Optional.of("subscriptions/sub/resourceGroups/rg"),
+                "FLOCI_AZ_SERVICES_MANAGED_IDENTITY_SYSTEM_ASSIGNED_SCOPE", "subscriptions/sub/resourceGroups/rg");
     }
     @Test
     void shouldWireEmailConfigIntoContainer() {

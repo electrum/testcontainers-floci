@@ -88,6 +88,7 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     private final ServiceConfigRef<ArmConfig> armConfig = registerServiceConfig(ArmConfig.builder().build());
     private final ServiceConfigRef<NetworkConfig> networkConfig = registerServiceConfig(NetworkConfig.builder().build());
     private final ServiceConfigRef<EventGridConfig> eventGridConfig = registerServiceConfig(EventGridConfig.builder().build());
+    private final ServiceConfigRef<ManagedIdentityConfig> managedIdentityConfig = registerServiceConfig(ManagedIdentityConfig.builder().build());
     private final ServiceConfigRef<EmailConfig> emailConfig = registerServiceConfig(EmailConfig.builder().build());
 
     /**
@@ -913,6 +914,29 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
      */
     public FlociAzContainer withEventGridConfig(Consumer<EventGridConfig.Builder> configurer) {
         return updateServiceConfig(eventGridConfig, configurer);
+    }
+    /**
+     * Returns the Azure Managed Identity configuration.
+     *
+     * @return the Managed Identity configuration
+     */
+    public ManagedIdentityConfig getManagedIdentityConfig() {
+        return managedIdentityConfig.get();
+    }
+
+    /**
+     * Configures Azure Managed Identity.
+     *
+     * <pre>{@code
+     * new FlociAzContainer()
+     *     .withManagedIdentityConfig(c -> c.systemAssignedScope("subscriptions/sub/resourceGroups/rg"));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link ManagedIdentityConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociAzContainer withManagedIdentityConfig(Consumer<ManagedIdentityConfig.Builder> configurer) {
+        return updateServiceConfig(managedIdentityConfig, configurer);
     }
     /**
      * Returns the Azure Communication Services Email configuration.
