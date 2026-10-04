@@ -76,6 +76,7 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     private final ServiceConfigRef<MySqlConfig> mySqlConfig = registerServiceConfig(MySqlConfig.builder().build());
     private final ServiceConfigRef<MariaDbConfig> mariaDbConfig = registerServiceConfig(MariaDbConfig.builder().build());
     private final ServiceConfigRef<ServiceBusConfig> serviceBusConfig = registerServiceConfig(ServiceBusConfig.builder().build());
+    private final ServiceConfigRef<AksConfig> aksConfig = registerServiceConfig(AksConfig.builder().build());
     private final ServiceConfigRef<ApimConfig> apimConfig = registerServiceConfig(ApimConfig.builder().build());
     private final ServiceConfigRef<MonitorConfig> monitorConfig = registerServiceConfig(MonitorConfig.builder().build());
     private final ServiceConfigRef<GraphConfig> graphConfig = registerServiceConfig(GraphConfig.builder().build());
@@ -607,6 +608,29 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
      */
     public FlociAzContainer withServiceBusConfig(Consumer<ServiceBusConfig.Builder> configurer) {
         return updateServiceConfig(serviceBusConfig, configurer);
+    }
+    /**
+     * Returns the Azure Kubernetes Service (AKS) configuration.
+     *
+     * @return the AKS configuration
+     */
+    public AksConfig getAksConfig() {
+        return aksConfig.get();
+    }
+
+    /**
+     * Configures Azure Kubernetes Service (AKS), which runs clusters in sibling containers and therefore requires the Docker socket unless mocked.
+     *
+     * <pre>{@code
+     * new FlociAzContainer()
+     *     .withAksConfig(c -> c.mocked(true));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link AksConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociAzContainer withAksConfig(Consumer<AksConfig.Builder> configurer) {
+        return updateServiceConfig(aksConfig, configurer);
     }
     /**
      * Returns the Azure API Management configuration.
