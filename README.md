@@ -3,7 +3,8 @@
 [![CI](https://github.com/floci-io/testcontainers-floci/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/floci-io/testcontainers-floci/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-[Testcontainers](https://testcontainers.com/) module for [Floci](https://github.com/floci-io/floci) — a free, open-source local AWS emulator.
+[Testcontainers](https://testcontainers.com/) modules for [Floci](https://github.com/floci-io/floci) — free, open-source local
+cloud emulators for AWS ([Floci](https://github.com/floci-io/floci)) and Azure ([Floci Azure](https://github.com/floci-io/floci-az)).
 
 Floci provides a single Docker container that emulates many AWS services (like S3, SQS, DynamoDB, Lambda, and more) on
 a single endpoint, making it ideal for integration testing. See the [Floci documentation](https://floci.io/floci/services/) for the full list of supported services.
@@ -12,7 +13,9 @@ a single endpoint, making it ideal for integration testing. See the [Floci docum
 
 | Module                                                                                                  | Description                                                |
 |-----------------------------------------------------------------------------------------------------------|-------------------------------------------------------------|
-| [`testcontainers-floci`](#module-testcontainers-floci)                                                    | Core Testcontainers module for starting a Floci container   |
+| [`testcontainers-floci`](#module-testcontainers-floci)                                                    | Testcontainers module for starting a Floci (AWS) container  |
+| [`testcontainers-floci-az`](#module-testcontainers-floci-az)                                              | Testcontainers module for starting a Floci Azure container  |
+| `testcontainers-floci-core`                                                                               | Shared base classes of the modules above (not used directly) |
 | [`spring-boot-testcontainers-floci`](#module-spring-boot-testcontainers-floci-decommissioned) (decommissioned) | Superseded by Spring Cloud AWS's own testcontainers module |
 
 ## Requirements
@@ -218,6 +221,110 @@ FlociContainer floci = new FlociContainer().withDockerSocket(true);
 | `getInitHooksConfig()`        | Current init hooks configuration                                  | —                |
 | `get*Config()`                | Current configuration of a service                                | —                |
 
+
+---
+
+## Module: testcontainers-floci-az
+
+The `testcontainers-floci-az` module provides a `FlociAzContainer` class that starts and manages a
+[Floci Azure](https://github.com/floci-io/floci-az) Docker container (`floci/floci-az`, port `4577`) for use in
+integration tests. It serves all emulated Azure services (Blob, Queue and Table Storage, Key Vault, Cosmos DB, Service
+Bus, Event Hubs, ARM-based services and more) on a single endpoint.
+
+### Installation
+
+```xml
+<dependency>
+    <groupId>io.floci</groupId>
+    <artifactId>testcontainers-floci-az</artifactId>
+    <version>${testcontainers-floci.version}</version>
+    <scope>test</scope>
+</dependency>
+```
+
+### Usage
+
+```java
+@Testcontainers
+class BlobStorageTest {
+
+    @Container
+    static FlociAzContainer floci = new FlociAzContainer();
+
+    @Test
+    void shouldUploadBlob() {
+        BlobServiceClient blobs = new BlobServiceClientBuilder()
+                .connectionString(floci.getStorageConnectionString())
+                .buildClient();
+
+        BlobClient blob = blobs.createBlobContainer("my-container").getBlobClient("hello.txt");
+        blob.upload(BinaryData.fromString("hello"));
+
+        assertThat(blob.downloadContent().toString()).isEqualTo("hello");
+    }
+}
+```
+
+Storage data planes live under account-prefixed paths of the default account `devstoreaccount1`
+(`getBlobEndpoint()`, `getQueueEndpoint()`, `getTableEndpoint()`); ARM management calls go to
+`getEndpoint() + "/subscriptions/" + getSubscriptionId() + ...`.
+
+#### HTTPS
+
+Several Azure SDKs (Key Vault, App Configuration, Communication Services, Cosmos DB) only talk HTTPS. Enable TLS and
+let the client trust the certificate Floci Azure serves; HTTP and HTTPS share the same port:
+
+```java
+FlociAzContainer floci = new FlociAzContainer().withTlsConfig(c -> c.enabled(true));
+floci.start();
+
+String certificatePem = floci.getTlsCertificate();      // add it to the trust store of your HTTP client
+SecretClient secrets = new SecretClientBuilder()
+        .vaultUrl(floci.getHttpsEndpoint() + "/devstoreaccount1-keyvault")
+        // ...
+        .buildClient();
+```
+
+### Configuration
+
+| Method                      | Description                                                                                         |
+|-----------------------------|-----------------------------------------------------------------------------------------------------|
+| `FlociAzContainer()`        | Creates a container with the default image (`floci/floci-az:latest`)                                |
+| `FlociAzContainer(String)`  | Creates a container with a custom image tag                                                         |
+| `withLogLevel(Level)`       | Sets the Floci Azure log level (`TRACE`, `DEBUG`, `INFO`, `WARN`, `ERROR`)                          |
+| `withDedicatedNetwork()`    | Creates a dedicated Docker network shared by Floci Azure and the containers it spawns               |
+| `withDockerSocket(boolean)` | Overrides whether the host Docker socket is mounted, bypassing auto-detection                       |
+| `withTlsConfig(...)`        | Configures TLS/HTTPS (self-signed by default; optionally provide cert/key paths)                    |
+| `withAuthConfig(...)`       | Configures authentication, e.g. keys of additional storage accounts used to validate SAS tokens     |
+| `with*Config(...)`          | Configures service-specific settings, e.g. `withServiceBusConfig(c -> c.mocked(false))`             |
+
+Docker-backed services (Functions, AKS, Container Registry, Redis, Event Hubs, Service Bus, SQL Database,
+PostgreSQL, MySQL, MariaDB, Cosmos DB API engines, Container Instances, Virtual Machines, Container Apps) mount the
+host Docker socket automatically while they are enabled and not `mocked`, exactly like the AWS module. Their sidecar
+containers publish their ports directly on the Docker host; the port ranges they use default to 10 ports each (e.g.
+`withAksConfig(c -> c.apiServerPortRange(6443, 10))`).
+
+> **Note:** Floci Azure generates some URLs (e.g. the polling URL of long-running Email operations) from its own base
+> URL `http://localhost:4577`, which does not match the randomly mapped host port of the container. Clients following
+> such URLs need to rewrite them to `getEndpoint()`/`getHttpsEndpoint()`.
+
+### Container Properties
+
+| Method                        | Description                                                       | Default                                |
+|-------------------------------|-------------------------------------------------------------------|----------------------------------------|
+| `getEndpoint()`               | HTTP endpoint URL (e.g. `http://localhost:32781`)                 | —                                      |
+| `getHttpsEndpoint()`          | HTTPS endpoint URL (requires TLS to be enabled)                   | —                                      |
+| `getTlsCertificate()`         | PEM certificate served for HTTPS (requires TLS to be enabled)     | —                                      |
+| `getAccountName()`            | Default storage account                                           | `devstoreaccount1`                     |
+| `getAccountKey()`             | Key of the default storage account                                | well-known development storage key     |
+| `getBlobEndpoint()`           | Blob Storage endpoint of the default account                      | —                                      |
+| `getQueueEndpoint()`          | Queue Storage endpoint of the default account                     | —                                      |
+| `getTableEndpoint()`          | Table Storage endpoint of the default account                     | —                                      |
+| `getStorageConnectionString()`| Connection string for Blob, Queue and Table Storage               | —                                      |
+| `getSubscriptionId()`         | Default subscription id (`withArmConfig(...)`)                    | `00000000-0000-0000-0000-000000000001` |
+| `getTenantId()`               | Default Microsoft Entra ID tenant id (`withEntraConfig(...)`)     | `00000000-0000-0000-0000-000000000002` |
+| `getLogLevel()`               | Configured log level                                              | `WARN`                                 |
+| `get*Config()`                | Current configuration of a service or of TLS/auth                 | —                                      |
 
 ---
 

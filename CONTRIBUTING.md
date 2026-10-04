@@ -38,7 +38,13 @@ running for the integration tests to pass.
 ## Project Structure
 
 ```
-testcontainers-floci/             Core module — FlociContainer and all config classes
+testcontainers-floci-core/        Shared base of all modules (provider-independent)
+  src/main/java/
+    io/floci/testcontainers/core/
+      AbstractFlociContainer.java Service config registry, env var/port/file-mount wiring, Docker socket detection
+      config/services/            AbstractServiceConfig, AbstractServiceConfigBuilder
+  src/test/java/                  Test helpers published as test-jar (ContainerUtils, TransferableCopyInspector)
+testcontainers-floci/             AWS module — FlociContainer and all config classes
   src/main/java/
     io/floci/testcontainers/
       FlociContainer.java         Main container class
@@ -50,7 +56,17 @@ testcontainers-floci/             Core module — FlociContainer and all config 
       config/services/            Unit tests for individual config classes (no Docker)
       services/                   Integration tests per AWS service (Docker required)
         AbstractServiceTest.java  Shared singleton FlociContainer used by all service tests
+testcontainers-floci-az/          Azure module — FlociAzContainer (extends AbstractFlociContainer)
+  src/main/java/
+    io/floci/testcontainers/az/
+      FlociAzContainer.java       Main container class
+      config/                     TlsConfig, AuthConfig
+      config/services/            Per-service config classes (one per Floci Azure service)
+  src/test/java/                  Same layout as the AWS module (FlociAzContainerServicesConfigTest, config/services/,
+                                  services/ with a TLS-enabled AbstractServiceTest)
 ```
+
+The AWS module does not use `testcontainers-floci-core` (yet); the other provider modules build on it.
 
 > **Note:** `spring-boot-testcontainers-floci` was removed on `main`. Use the
 > [`spring-cloud-aws-testcontainers`](https://github.com/awspring/spring-cloud-aws) module (from Spring Cloud AWS
@@ -106,6 +122,20 @@ When Floci adds a new service, the typical steps are:
    unchecked).
 5. Add an integration test in `testcontainers-floci/src/test/java/io/floci/testcontainers/services/` extending
    `AbstractServiceTest`.
+
+### Adding support for a new Floci Azure service
+
+Same steps as above, in `testcontainers-floci-az`:
+
+1. Create `config/services/<Service>Config.java` extending the core `AbstractServiceConfig` (use the `super(builder)`
+   constructor), with env vars named `FLOCI_AZ_SERVICES_<ACCESSOR>_<PROPERTY>`. Keep Floci's property names (Floci
+   Azure calls the docker-less mode `mocked`), and override `requiresDockerSocket()` for Docker-backed services.
+2. In `FlociAzContainer`, add a `ServiceConfigRef` field via `registerServiceConfig(...)` (in Floci's
+   `ServicesConfig` order) plus a `get<Service>Config()` and a `with<Service>Config(...)` method that delegates to
+   `updateServiceConfig(...)`.
+3. Add `<Service>ConfigTest`, a `shouldWire<Service>ConfigIntoContainer()` test in
+   `FlociAzContainerServicesConfigTest`, the getter in `FlociAzContainerTest.shouldDisableAllServices()` and a
+   Docker-backed `services/<Service>ServiceTest`.
 
 ## Commit Messages
 

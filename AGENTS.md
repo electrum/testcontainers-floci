@@ -6,7 +6,13 @@ Testcontainers module for [Floci](https://github.com/floci-io/floci) — a local
 
 ## Structure
 
-- `testcontainers-floci/` — Core module: `FlociContainer` extending `GenericContainer`
+- `testcontainers-floci-core/` — Shared, provider-independent base: `AbstractFlociContainer` (service config
+  registry, env-var/port/file-mount wiring, Docker socket auto-detection, log level, dedicated network, graceful stop)
+  and `AbstractServiceConfig`/`AbstractServiceConfigBuilder`. Publishes its test helpers (`ContainerUtils`,
+  `TransferableCopyInspector`) as test-jar. Not used by the AWS module (yet).
+- `testcontainers-floci/` — AWS module: `FlociContainer` extending `GenericContainer`
+- `testcontainers-floci-az/` — Azure module: `FlociAzContainer` extending `AbstractFlociContainer`, for
+  [Floci Azure](https://github.com/floci-io/floci-az) (`floci/floci-az`, port 4577)
 
 `spring-boot-testcontainers-floci` (Spring Boot integration via `@ServiceConnection`) was removed on `main` — the
 same functionality is now provided by Spring Cloud AWS's own `spring-cloud-aws-testcontainers` module (from Spring
@@ -77,6 +83,32 @@ entry point; everything else hangs off it:
   add a new service config, add its getter to that assertion list too — otherwise the new service is silently
   unchecked. When adding a service, verify this test lists all config classes under `config/services/` and fill in
   any gaps.
+
+## Azure module (`testcontainers-floci-az`)
+
+Mirrors the AWS module, with these differences:
+
+- `FlociAzContainer` registers each service via `registerServiceConfig(...)` (a `ServiceConfigRef` field per service,
+  in Floci's `ServicesConfig` order) and its `with<Service>Config(...)` delegates to `updateServiceConfig(...)`;
+  there is no hand-written accessor list. Cross-cutting configs (`config/TlsConfig`, `config/AuthConfig`) are applied in
+  `applyGlobalEnvVars()`.
+- Configs extend the core `AbstractServiceConfig` from another package, so they call `super(builder)` instead of
+  reading `builder.enabled`.
+- Naming follows Floci Azure (`mocked`, not `mock`). Deprecated Floci properties (e.g. `sql.mocked`) are not exposed.
+  Port ranges use `…PortRange(basePort, amount)` with a default count of 10. All sidecar ports are published by the
+  sidecar containers on the Docker host, so no Azure config overrides `applyExposedPortsToContainer(...)`.
+  Properties whose Floci default is an expression (`functions.code-path`, `managed-identity.system-assigned-scope`)
+  are `Optional` and only emitted when set.
+- Tests have the same structure (`*ConfigTest` with the six aspect methods, `FlociAzContainerServicesConfigTest`,
+  `FlociAzContainerTest.shouldDisableAllServices()`, `services/*ServiceTest`). The shared `AbstractServiceTest`
+  container runs with TLS enabled and offers `httpsClient()` (Azure SDK HTTP client trusting the Floci certificate)
+  and `rest(...)` helpers for the ARM management plane (raw HTTP + Jackson, like Floci's own compatibility tests).
+  Services that would otherwise start sidecars are tested against a dedicated `mocked` container.
+
+```
+mvn -pl testcontainers-floci-core,testcontainers-floci-az test
+mvn -pl testcontainers-floci-az test -Dtest=BlobServiceTest
+```
 
 ## Keeping up to date with Floci (config migration process)
 
@@ -291,6 +323,23 @@ Finish with a report containing:
    does, and whether a matching class already exists in `config/` (so it would be an extension rather than a new
    class). Call out relocations/deprecations (e.g. a root property moved into `protocols`) explicitly, because they may
    affect env vars that existing classes already emit.
+
+### Floci Azure
+
+The same process applies to `testcontainers-floci-az`, with these values:
+
+| What                     | Where                                                                                     |
+|--------------------------|-------------------------------------------------------------------------------------------|
+| Upstream                 | https://github.com/floci-io/floci-az                                                      |
+| The user's fork          | `cfranzen/floci-az` (to be created by the user), tag `migrated-to-testcontainers`         |
+| The file to diff         | `src/main/java/io/floci/az/config/EmulatorConfig.java` (`@ConfigMapping(prefix = "floci-az")`) |
+| Env-var prefix           | `FLOCI_AZ_…`, services `FLOCI_AZ_SERVICES_<ACCESSOR>_<PROPERTY>` (camelCase accessors are kebab-cased: `keyVault()` → `KEY_VAULT`) |
+| Image for service tests  | `floci/floci-az:nightly`                                                                  |
+
+Initial migration: `3d2d06c7508ce82362f42921c51b63f197b94089` (floci-az `main`, 2026-10-03). Classify the diff as for
+AWS: migrate `ServicesConfig`; `TlsConfig` and `AuthConfig` are migrated cross-cutting classes and must be kept in sync
+too; ignore `StorageConfig.services` (per-service storage overrides); only summarize everything else (`dns`, `storage`,
+`docker`, root properties). Commit scope is `az` (e.g. `feat(az): add <property> config property`).
 
 ## Key Tech
 
