@@ -47,6 +47,15 @@ class FlociAzContainerTest {
     }
 
     @Test
+    void shouldReturnConfiguredKeyOfDefaultStorageAccount() {
+        try (FlociAzContainer container = new FlociAzContainer()) {
+            container.withAuthConfig(c -> c.storageAccountKey("devstoreaccount1", "bXkta2V5"));
+
+            assertThat(container.getAccountKey()).isEqualTo("bXkta2V5");
+        }
+    }
+
+    @Test
     void shouldConfigureLogLevel() {
         try (FlociAzContainer container = new FlociAzContainer()) {
             assertThat(container.getLogLevel()).isEqualTo(Level.WARN);

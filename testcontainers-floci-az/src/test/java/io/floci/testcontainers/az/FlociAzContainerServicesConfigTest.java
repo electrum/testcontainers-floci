@@ -50,6 +50,14 @@ class FlociAzContainerServicesConfigTest {
     // --- Cross-cutting configs (config/) ----------------------------------------------------------
 
     @Test
+    void shouldWireAuthConfigIntoContainer() {
+        assertConfigWired(
+                c -> c.withAuthConfig(cfg -> cfg.mode("strict")),
+                c -> c.getAuthConfig().getMode(), "strict",
+                "FLOCI_AZ_AUTH_MODE", "strict");
+    }
+
+    @Test
     void shouldWireTlsConfigIntoContainer() {
         assertConfigWired(
                 c -> c.withTlsConfig(cfg -> cfg.enabled(true)),

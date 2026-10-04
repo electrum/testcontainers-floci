@@ -1,5 +1,6 @@
 package io.floci.testcontainers.az;
 
+import io.floci.testcontainers.az.config.AuthConfig;
 import io.floci.testcontainers.az.config.TlsConfig;
 import io.floci.testcontainers.core.AbstractFlociContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -57,6 +58,7 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
             "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==";
 
     private TlsConfig tlsConfig = TlsConfig.builder().build();
+    private AuthConfig authConfig = AuthConfig.builder().build();
 
     /**
      * Creates a new Floci Azure container with the default image ({@code floci/floci-az:latest}).
@@ -93,6 +95,7 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     @Override
     protected void applyGlobalEnvVars() {
         tlsConfig.applyEnvVarsToContainer(this);
+        authConfig.applyEnvVarsToContainer(this);
     }
 
     /**
@@ -163,6 +166,35 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     }
 
     /**
+     * Returns the authentication configuration.
+     *
+     * @return the authentication configuration
+     */
+    public AuthConfig getAuthConfig() {
+        return authConfig;
+    }
+
+    /**
+     * Configures authentication of the Floci Azure server, e.g. the keys of additional storage accounts used
+     * to validate shared-key signed SAS tokens:
+     *
+     * <pre>{@code
+     * new FlociAzContainer()
+     *     .withAuthConfig(c -> c.storageAccountKey("myaccount", "bXktYmFzZTY0LWtleQ=="));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link AuthConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociAzContainer withAuthConfig(Consumer<AuthConfig.Builder> configurer) {
+        AuthConfig.Builder builder = authConfig.toBuilder();
+        configurer.accept(builder);
+        this.authConfig = builder.build();
+        authConfig.applyEnvVarsToContainer(this);
+        return this;
+    }
+
+    /**
      * Returns the name of the default storage account ({@value DEFAULT_ACCOUNT_NAME}). Floci Azure serves
      * the data planes of all storage services under paths prefixed with the account name.
      *
@@ -173,12 +205,14 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     }
 
     /**
-     * Returns the key of the default storage account, i.e. the well-known development storage key.
+     * Returns the key of the default storage account: the well-known development storage key, unless a
+     * different key was configured for {@value DEFAULT_ACCOUNT_NAME} via
+     * {@link AuthConfig.Builder#storageAccountKey(String, String)}.
      *
      * @return the base64-encoded storage account key
      */
     public String getAccountKey() {
-        return DEFAULT_ACCOUNT_KEY;
+        return authConfig.getStorageAccountKeys().getOrDefault(DEFAULT_ACCOUNT_NAME, DEFAULT_ACCOUNT_KEY);
     }
 
     /**
