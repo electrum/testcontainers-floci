@@ -77,6 +77,7 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     private final ServiceConfigRef<MariaDbConfig> mariaDbConfig = registerServiceConfig(MariaDbConfig.builder().build());
     private final ServiceConfigRef<ServiceBusConfig> serviceBusConfig = registerServiceConfig(ServiceBusConfig.builder().build());
     private final ServiceConfigRef<AksConfig> aksConfig = registerServiceConfig(AksConfig.builder().build());
+    private final ServiceConfigRef<AciConfig> aciConfig = registerServiceConfig(AciConfig.builder().build());
     private final ServiceConfigRef<ApimConfig> apimConfig = registerServiceConfig(ApimConfig.builder().build());
     private final ServiceConfigRef<MonitorConfig> monitorConfig = registerServiceConfig(MonitorConfig.builder().build());
     private final ServiceConfigRef<GraphConfig> graphConfig = registerServiceConfig(GraphConfig.builder().build());
@@ -631,6 +632,29 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
      */
     public FlociAzContainer withAksConfig(Consumer<AksConfig.Builder> configurer) {
         return updateServiceConfig(aksConfig, configurer);
+    }
+    /**
+     * Returns the Azure Container Instances configuration.
+     *
+     * @return the Container Instances configuration
+     */
+    public AciConfig getAciConfig() {
+        return aciConfig.get();
+    }
+
+    /**
+     * Configures Azure Container Instances, which requires the Docker socket unless mocked (the default).
+     *
+     * <pre>{@code
+     * new FlociAzContainer()
+     *     .withAciConfig(c -> c.mocked(false));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link AciConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociAzContainer withAciConfig(Consumer<AciConfig.Builder> configurer) {
+        return updateServiceConfig(aciConfig, configurer);
     }
     /**
      * Returns the Azure API Management configuration.

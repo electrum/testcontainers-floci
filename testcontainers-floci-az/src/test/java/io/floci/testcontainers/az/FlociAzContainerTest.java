@@ -76,6 +76,7 @@ class FlociAzContainerTest {
                     container.getMariaDbConfig(),
                     container.getServiceBusConfig(),
                     container.getAksConfig(),
+                    container.getAciConfig(),
                     container.getApimConfig(),
                     container.getMonitorConfig(),
                     container.getGraphConfig(),
