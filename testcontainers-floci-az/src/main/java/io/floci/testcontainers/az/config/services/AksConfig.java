@@ -91,7 +91,8 @@ public class AksConfig extends AbstractServiceConfig<AksConfig.Builder> {
     }
 
     /**
-     * Returns the number of ports of the host port range of the k3s API servers, starting from {@link #getApiServerBasePort()}.
+     * Returns the number of ports of the host port range of the k3s API servers, starting from {@link
+     * #getApiServerBasePort()}.
      *
      * @return the number of ports
      */

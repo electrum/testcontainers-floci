@@ -88,7 +88,8 @@ public class AcrConfig extends AbstractServiceConfig<AcrConfig.Builder> {
     }
 
     /**
-     * Returns the number of ports of the host port range of the registry instances, starting from {@link #getBasePort()}.
+     * Returns the number of ports of the host port range of the registry instances, starting from {@link
+     * #getBasePort()}.
      *
      * @return the number of ports
      */

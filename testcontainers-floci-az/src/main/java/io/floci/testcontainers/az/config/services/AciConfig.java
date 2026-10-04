@@ -75,7 +75,8 @@ public class AciConfig extends AbstractServiceConfig<AciConfig.Builder> {
     }
 
     /**
-     * Returns the number of ports of the host port range for published container-group ports, starting from {@link #getBasePort()}.
+     * Returns the number of ports of the host port range for published container-group ports, starting from {@link
+     * #getBasePort()}.
      *
      * @return the number of ports
      */

@@ -396,7 +396,8 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     }
 
     /**
-     * Configures Azure Functions, which runs functions in sibling containers and therefore requires the Docker socket unless mocked.
+     * Configures Azure Functions, which runs functions in sibling containers and therefore requires the Docker
+     * socket unless mocked.
      *
      * <pre>{@code
      * new FlociAzContainer()
@@ -466,7 +467,8 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     }
 
     /**
-     * Configures Azure Cosmos DB, whose Docker-backed API engines (MongoDB, PostgreSQL, Cassandra, Gremlin) require the Docker socket.
+     * Configures Azure Cosmos DB, whose Docker-backed API engines (MongoDB, PostgreSQL, Cassandra, Gremlin)
+     * require the Docker socket.
      *
      * <pre>{@code
      * new FlociAzContainer()
@@ -512,7 +514,8 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     }
 
     /**
-     * Configures Azure Event Hubs, which runs its brokers in sibling containers and therefore requires the Docker socket unless mocked.
+     * Configures Azure Event Hubs, which runs its brokers in sibling containers and therefore requires the Docker
+     * socket unless mocked.
      *
      * <pre>{@code
      * new FlociAzContainer()
@@ -535,7 +538,8 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     }
 
     /**
-     * Configures Azure SQL Database, whose managed data plane runs SQL Server in sibling containers and therefore requires the Docker socket.
+     * Configures Azure SQL Database, whose managed data plane runs SQL Server in sibling containers and therefore
+     * requires the Docker socket.
      *
      * <pre>{@code
      * new FlociAzContainer()
@@ -558,7 +562,8 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     }
 
     /**
-     * Configures Azure Database for PostgreSQL, which spawns sibling containers and therefore requires the Docker socket unless mocked.
+     * Configures Azure Database for PostgreSQL, which spawns sibling containers and therefore requires the Docker
+     * socket unless mocked.
      *
      * <pre>{@code
      * new FlociAzContainer()
@@ -581,7 +586,8 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     }
 
     /**
-     * Configures Azure Database for MySQL, which spawns sibling containers and therefore requires the Docker socket unless mocked.
+     * Configures Azure Database for MySQL, which spawns sibling containers and therefore requires the Docker
+     * socket unless mocked.
      *
      * <pre>{@code
      * new FlociAzContainer()
@@ -604,7 +610,8 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     }
 
     /**
-     * Configures Azure Database for MariaDB, which spawns sibling containers and therefore requires the Docker socket unless mocked.
+     * Configures Azure Database for MariaDB, which spawns sibling containers and therefore requires the Docker
+     * socket unless mocked.
      *
      * <pre>{@code
      * new FlociAzContainer()
@@ -650,7 +657,8 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     }
 
     /**
-     * Configures Azure Kubernetes Service (AKS), which runs clusters in sibling containers and therefore requires the Docker socket unless mocked.
+     * Configures Azure Kubernetes Service (AKS), which runs clusters in sibling containers and therefore requires
+     * the Docker socket unless mocked.
      *
      * <pre>{@code
      * new FlociAzContainer()
@@ -742,7 +750,8 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     }
 
     /**
-     * Configures Azure Cache for Redis, which runs caches in sibling containers and therefore requires the Docker socket unless mocked.
+     * Configures Azure Cache for Redis, which runs caches in sibling containers and therefore requires the Docker
+     * socket unless mocked.
      *
      * <pre>{@code
      * new FlociAzContainer()
@@ -765,7 +774,8 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     }
 
     /**
-     * Configures Azure Container Registry, which runs registries in a sibling container and therefore requires the Docker socket unless mocked.
+     * Configures Azure Container Registry, which runs registries in a sibling container and therefore requires the
+     * Docker socket unless mocked.
      *
      * <pre>{@code
      * new FlociAzContainer()
