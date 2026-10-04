@@ -1,5 +1,55 @@
 # Changelog
 
+## [2.17.0](https://github.com/floci-io/testcontainers-floci/compare/v2.16.1...v2.17.0) (2026-10-04)
+
+
+### Features
+
+* **az:** add AKS service support ([f37734d](https://github.com/floci-io/testcontainers-floci/commit/f37734dad6717c9d1716dcead30cb08ce724c657))
+* **az:** add API Management and Virtual Network service support ([178c050](https://github.com/floci-io/testcontainers-floci/commit/178c050718118ff999e956e31eecdf35819c9608))
+* **az:** add ARM service support ([e20cad3](https://github.com/floci-io/testcontainers-floci/commit/e20cad392fce5898667df18f055325caa660b1e9))
+* **az:** add AuthConfig ([12c7a53](https://github.com/floci-io/testcontainers-floci/commit/12c7a53e4353ee076de61a7c73fc461baf75fc35))
+* **az:** add Azure Cache for Redis service support ([b77a31f](https://github.com/floci-io/testcontainers-floci/commit/b77a31fe2dd59dd598940dcc6f3e98501fa62754))
+* **az:** add Azure Database for MariaDB service support ([c808f5a](https://github.com/floci-io/testcontainers-floci/commit/c808f5a212e9cd66a5a95fcabc66d2695e509871))
+* **az:** add Azure Database for MySQL service support ([e64c132](https://github.com/floci-io/testcontainers-floci/commit/e64c1325aa3f92a3d6215d269e785cf8ad24fdeb))
+* **az:** add Azure Database for PostgreSQL service support ([219ebb1](https://github.com/floci-io/testcontainers-floci/commit/219ebb127083d69494204f99ba3df4e82810d765))
+* **az:** add Azure Functions service support ([abdaf21](https://github.com/floci-io/testcontainers-floci/commit/abdaf21cd3df3bad944ebb4c8304b3ea99d958f7))
+* **az:** add Azure SQL Database service support ([2e58714](https://github.com/floci-io/testcontainers-floci/commit/2e58714480ee7a5f6121849835ee26c3c25f047f))
+* **az:** add Blob Storage service support ([af500ca](https://github.com/floci-io/testcontainers-floci/commit/af500cad0e54e9bfa2eb73299614bc5047b146f3))
+* **az:** add Container Apps service support ([02e0198](https://github.com/floci-io/testcontainers-floci/commit/02e019836c548d2992023a6e3bdfaeeb0f9bed2a))
+* **az:** add Container Instances service support ([e4897ea](https://github.com/floci-io/testcontainers-floci/commit/e4897eaf50c2b5fffa0a17299064be82778f4eef))
+* **az:** add Container Registry service support ([e689e25](https://github.com/floci-io/testcontainers-floci/commit/e689e257972b35df1d86ac4957fc8530abcea2f5))
+* **az:** add Cosmos DB service support ([649404f](https://github.com/floci-io/testcontainers-floci/commit/649404fe9de37e83058bde3e7a7b85d59254472a))
+* **az:** add Event Grid service support ([87eec55](https://github.com/floci-io/testcontainers-floci/commit/87eec55dd6360ed416406fd17756498e991fa551))
+* **az:** add Event Hubs service support ([f619826](https://github.com/floci-io/testcontainers-floci/commit/f6198265b401d29bec6b887ee9c60f89fc59a0bf))
+* **az:** add Key Vault, Monitor and Graph service support ([7e44195](https://github.com/floci-io/testcontainers-floci/commit/7e441959216bb13dcc8c4a07b135d912bb9082af))
+* **az:** add Managed Identity service support ([842d38c](https://github.com/floci-io/testcontainers-floci/commit/842d38c7899efab0b51a4b068d4ae9b52c78ca68))
+* **az:** add Microsoft Entra ID service support ([9a8b770](https://github.com/floci-io/testcontainers-floci/commit/9a8b770a317477cca72583e4a72d30f51e540be7))
+* **az:** add Queue, Table, App Configuration and Email service support ([9f4ba6b](https://github.com/floci-io/testcontainers-floci/commit/9f4ba6b3f810a1f2ff89b053e5077f10a9401a92))
+* **az:** add Service Bus service support ([6afe50b](https://github.com/floci-io/testcontainers-floci/commit/6afe50b8f8d135e4477f8af2aae871b06cd17396))
+* **az:** add SignalR service support ([7b56ded](https://github.com/floci-io/testcontainers-floci/commit/7b56ded6932b9f1dfc85adb3a913ec83263c2f82))
+* **az:** add testcontainers-floci-az module ([8f256e5](https://github.com/floci-io/testcontainers-floci/commit/8f256e5b882018539e716d1404b40fe85e7a6ab4))
+* **az:** add TlsConfig ([0730d4d](https://github.com/floci-io/testcontainers-floci/commit/0730d4d918fad751fe3c200f215a1e1efab24271))
+* **az:** add Virtual Machines service support ([c4a9d3c](https://github.com/floci-io/testcontainers-floci/commit/c4a9d3c8e8138b55ac7b8a89b3f9577f189f801a))
+* **core:** add testcontainers-floci-core module ([9937a19](https://github.com/floci-io/testcontainers-floci/commit/9937a1987c75dc10caece116ecbd8b122eae4e17))
+* remove spring-boot-testcontainers-floci module ([#405](https://github.com/floci-io/testcontainers-floci/issues/405)) ([96b92fa](https://github.com/floci-io/testcontainers-floci/commit/96b92fa38c101f424d022cbb4fbc0e3d958447ed))
+
+
+### Bug Fixes
+
+* **controltower:** create a landing zone in ControlTowerServiceTest ([49d503c](https://github.com/floci-io/testcontainers-floci/commit/49d503c3f4ec7399602b6e50ffabe02c85f3e53a))
+* create a real Secrets Manager secret in RdsDataServiceTest ([d54016a](https://github.com/floci-io/testcontainers-floci/commit/d54016acf7e267a182e3169bc353cafd9e55d3c3))
+* **eks:** make EksServiceTest's bearer token pass Floci's IAM auth webhook ([deeb287](https://github.com/floci-io/testcontainers-floci/commit/deeb2872011b250683e6971649746d897566fdf9))
+
+
+### Documentation
+
+* **agents:** add step to re-check disabled tests during Floci migration ([81f8db9](https://github.com/floci-io/testcontainers-floci/commit/81f8db9eb160f6071df95b0df9b054a05f210219))
+* **agents:** document the Floci config migration process ([e267e31](https://github.com/floci-io/testcontainers-floci/commit/e267e31c4de33fe472fa8930390b523b8d36cfd8))
+* **agents:** reinforce no AI attribution trailers in commits/PRs ([29f1e96](https://github.com/floci-io/testcontainers-floci/commit/29f1e96e00ab30b96d304b1cf8655d3469d3650d))
+* **az:** wrap long javadoc lines of the service configs ([959e3e4](https://github.com/floci-io/testcontainers-floci/commit/959e3e4218b1185006dd2ed0610c186b28937a4a))
+* document testcontainers-floci-core and testcontainers-floci-az ([82fdc81](https://github.com/floci-io/testcontainers-floci/commit/82fdc81664292167cbc67e5c9c0e4161d96ab343))
+
 ## [2.16.1](https://github.com/floci-io/testcontainers-floci/compare/v2.16.0...v2.16.1) (2026-09-02)
 
 
