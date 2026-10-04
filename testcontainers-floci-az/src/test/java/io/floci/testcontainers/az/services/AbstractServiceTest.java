@@ -134,8 +134,15 @@ abstract class AbstractServiceTest {
      * Same as {@link #rest(String, String, String)}, but against the given container instead of the shared one.
      */
     protected static RestResponse rest(FlociAzContainer container, String method, String path, String body) {
+        return rest(container, method, path, body, "test-token");
+    }
+
+    /**
+     * Same as {@link #rest(FlociAzContainer, String, String, String)}, but with the given bearer token.
+     */
+    protected static RestResponse rest(FlociAzContainer container, String method, String path, String body, String bearerToken) {
         java.net.http.HttpRequest.Builder request = java.net.http.HttpRequest.newBuilder(URI.create(container.getEndpoint() + path))
-                .header("Authorization", "Bearer test-token");
+                .header("Authorization", "Bearer " + bearerToken);
         if (body != null) {
             request.header("Content-Type", "application/json")
                     .method(method, java.net.http.HttpRequest.BodyPublishers.ofString(body));

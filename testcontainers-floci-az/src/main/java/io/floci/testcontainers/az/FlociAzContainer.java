@@ -67,6 +67,7 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     private final ServiceConfigRef<TableConfig> tableConfig = registerServiceConfig(TableConfig.builder().build());
     private final ServiceConfigRef<FunctionsConfig> functionsConfig = registerServiceConfig(FunctionsConfig.builder().build());
     private final ServiceConfigRef<AppConfigConfig> appConfigConfig = registerServiceConfig(AppConfigConfig.builder().build());
+    private final ServiceConfigRef<SignalRConfig> signalRConfig = registerServiceConfig(SignalRConfig.builder().build());
     private final ServiceConfigRef<KeyVaultConfig> keyVaultConfig = registerServiceConfig(KeyVaultConfig.builder().build());
     private final ServiceConfigRef<ApimConfig> apimConfig = registerServiceConfig(ApimConfig.builder().build());
     private final ServiceConfigRef<MonitorConfig> monitorConfig = registerServiceConfig(MonitorConfig.builder().build());
@@ -393,6 +394,29 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
         return updateServiceConfig(appConfigConfig, configurer);
     }
 
+    /**
+     * Returns the Azure SignalR Service configuration.
+     *
+     * @return the SignalR configuration
+     */
+    public SignalRConfig getSignalRConfig() {
+        return signalRConfig.get();
+    }
+
+    /**
+     * Configures Azure SignalR Service.
+     *
+     * <pre>{@code
+     * new FlociAzContainer()
+     *     .withSignalRConfig(c -> c.accessKey("bXktc2lnbmFsci1rZXk="));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link SignalRConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociAzContainer withSignalRConfig(Consumer<SignalRConfig.Builder> configurer) {
+        return updateServiceConfig(signalRConfig, configurer);
+    }
     /**
      * Returns the Azure Key Vault configuration.
      *

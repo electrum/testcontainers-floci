@@ -89,6 +89,13 @@ class FlociAzContainerServicesConfigTest {
     }
 
     @Test
+    void shouldWireSignalRConfigIntoContainer() {
+        assertConfigWired(
+                c -> c.withSignalRConfig(cfg -> cfg.accessKey("bXktc2lnbmFsci1rZXk=")),
+                c -> c.getSignalRConfig().getAccessKey(), "bXktc2lnbmFsci1rZXk=",
+                "FLOCI_AZ_SERVICES_SIGNALR_ACCESS_KEY", "bXktc2lnbmFsci1rZXk=");
+    }
+    @Test
     void shouldWireKeyVaultConfigIntoContainer() {
         assertConfigWired(
                 c -> c.withKeyVaultConfig(cfg -> cfg.enabled(false)),

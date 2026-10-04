@@ -66,6 +66,7 @@ class FlociAzContainerTest {
                     container.getTableConfig(),
                     container.getFunctionsConfig(),
                     container.getAppConfigConfig(),
+                    container.getSignalRConfig(),
                     container.getKeyVaultConfig(),
                     container.getApimConfig(),
                     container.getMonitorConfig(),
