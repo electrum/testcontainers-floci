@@ -166,6 +166,13 @@ class FlociAzContainerServicesConfigTest {
                 "FLOCI_AZ_SERVICES_ACI_MOCKED", "false");
     }
     @Test
+    void shouldWireVmConfigIntoContainer() {
+        assertConfigWired(
+                c -> c.withVmConfig(cfg -> cfg.mocked(false)),
+                c -> c.getVmConfig().isMocked(), false,
+                "FLOCI_AZ_SERVICES_VM_MOCKED", "false");
+    }
+    @Test
     void shouldWireApimConfigIntoContainer() {
         assertConfigWired(
                 c -> c.withApimConfig(cfg -> cfg.enabled(false)),

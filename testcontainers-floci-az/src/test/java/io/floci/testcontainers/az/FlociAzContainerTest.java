@@ -77,6 +77,7 @@ class FlociAzContainerTest {
                     container.getServiceBusConfig(),
                     container.getAksConfig(),
                     container.getAciConfig(),
+                    container.getVmConfig(),
                     container.getApimConfig(),
                     container.getMonitorConfig(),
                     container.getGraphConfig(),

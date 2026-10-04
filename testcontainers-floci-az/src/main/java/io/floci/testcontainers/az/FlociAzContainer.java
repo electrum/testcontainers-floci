@@ -78,6 +78,7 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     private final ServiceConfigRef<ServiceBusConfig> serviceBusConfig = registerServiceConfig(ServiceBusConfig.builder().build());
     private final ServiceConfigRef<AksConfig> aksConfig = registerServiceConfig(AksConfig.builder().build());
     private final ServiceConfigRef<AciConfig> aciConfig = registerServiceConfig(AciConfig.builder().build());
+    private final ServiceConfigRef<VmConfig> vmConfig = registerServiceConfig(VmConfig.builder().build());
     private final ServiceConfigRef<ApimConfig> apimConfig = registerServiceConfig(ApimConfig.builder().build());
     private final ServiceConfigRef<MonitorConfig> monitorConfig = registerServiceConfig(MonitorConfig.builder().build());
     private final ServiceConfigRef<GraphConfig> graphConfig = registerServiceConfig(GraphConfig.builder().build());
@@ -655,6 +656,29 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
      */
     public FlociAzContainer withAciConfig(Consumer<AciConfig.Builder> configurer) {
         return updateServiceConfig(aciConfig, configurer);
+    }
+    /**
+     * Returns the Azure Virtual Machines configuration.
+     *
+     * @return the Virtual Machines configuration
+     */
+    public VmConfig getVmConfig() {
+        return vmConfig.get();
+    }
+
+    /**
+     * Configures Azure Virtual Machines, which requires the Docker socket unless mocked (the default).
+     *
+     * <pre>{@code
+     * new FlociAzContainer()
+     *     .withVmConfig(c -> c.mocked(false));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link VmConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociAzContainer withVmConfig(Consumer<VmConfig.Builder> configurer) {
+        return updateServiceConfig(vmConfig, configurer);
     }
     /**
      * Returns the Azure API Management configuration.
