@@ -47,6 +47,40 @@ class FlociAzContainerServicesConfigTest {
         }
     }
 
+    // --- Service configs (config/services/) -------------------------------------------------------
+
+    @Test
+    void shouldWireQueueConfigIntoContainer() {
+        assertConfigWired(
+                c -> c.withQueueConfig(cfg -> cfg.enabled(false)),
+                c -> c.getQueueConfig().isEnabled(), false,
+                "FLOCI_AZ_SERVICES_QUEUE_ENABLED", "false");
+    }
+
+    @Test
+    void shouldWireTableConfigIntoContainer() {
+        assertConfigWired(
+                c -> c.withTableConfig(cfg -> cfg.enabled(false)),
+                c -> c.getTableConfig().isEnabled(), false,
+                "FLOCI_AZ_SERVICES_TABLE_ENABLED", "false");
+    }
+
+    @Test
+    void shouldWireAppConfigConfigIntoContainer() {
+        assertConfigWired(
+                c -> c.withAppConfigConfig(cfg -> cfg.enabled(false)),
+                c -> c.getAppConfigConfig().isEnabled(), false,
+                "FLOCI_AZ_SERVICES_APP_CONFIG_ENABLED", "false");
+    }
+
+    @Test
+    void shouldWireEmailConfigIntoContainer() {
+        assertConfigWired(
+                c -> c.withEmailConfig(cfg -> cfg.enabled(false)),
+                c -> c.getEmailConfig().isEnabled(), false,
+                "FLOCI_AZ_SERVICES_EMAIL_ENABLED", "false");
+    }
+
     // --- Cross-cutting configs (config/) ----------------------------------------------------------
 
     @Test

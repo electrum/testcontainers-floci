@@ -1,5 +1,6 @@
 package io.floci.testcontainers.az;
 
+import io.floci.testcontainers.core.config.services.AbstractServiceConfig;
 import org.junit.jupiter.api.Test;
 import org.slf4j.event.Level;
 import org.testcontainers.utility.DockerImageName;
@@ -8,6 +9,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -52,6 +54,18 @@ class FlociAzContainerTest {
             container.withAuthConfig(c -> c.storageAccountKey("devstoreaccount1", "bXkta2V5"));
 
             assertThat(container.getAccountKey()).isEqualTo("bXkta2V5");
+        }
+    }
+
+    @Test
+    void shouldDisableAllServices() {
+        try (FlociAzContainer container = new FlociAzContainer().disableAllServices()) {
+            assertThat(List.<AbstractServiceConfig<?>>of(
+                    container.getQueueConfig(),
+                    container.getTableConfig(),
+                    container.getAppConfigConfig(),
+                    container.getEmailConfig()
+            )).noneMatch(AbstractServiceConfig::isEnabled);
         }
     }
 

@@ -2,6 +2,7 @@ package io.floci.testcontainers.az;
 
 import io.floci.testcontainers.az.config.AuthConfig;
 import io.floci.testcontainers.az.config.TlsConfig;
+import io.floci.testcontainers.az.config.services.*;
 import io.floci.testcontainers.core.AbstractFlociContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
@@ -59,6 +60,12 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
 
     private TlsConfig tlsConfig = TlsConfig.builder().build();
     private AuthConfig authConfig = AuthConfig.builder().build();
+
+    // Service configs
+    private final ServiceConfigRef<QueueConfig> queueConfig = registerServiceConfig(QueueConfig.builder().build());
+    private final ServiceConfigRef<TableConfig> tableConfig = registerServiceConfig(TableConfig.builder().build());
+    private final ServiceConfigRef<AppConfigConfig> appConfigConfig = registerServiceConfig(AppConfigConfig.builder().build());
+    private final ServiceConfigRef<EmailConfig> emailConfig = registerServiceConfig(EmailConfig.builder().build());
 
     /**
      * Creates a new Floci Azure container with the default image ({@code floci/floci-az:latest}).
@@ -259,5 +266,101 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
                 + ";QueueEndpoint=" + getQueueEndpoint()
                 + ";TableEndpoint=" + getTableEndpoint()
                 + ";";
+    }
+
+    /**
+     * Returns the Azure Queue Storage configuration.
+     *
+     * @return the Queue Storage configuration
+     */
+    public QueueConfig getQueueConfig() {
+        return queueConfig.get();
+    }
+
+    /**
+     * Configures Azure Queue Storage.
+     *
+     * <pre>{@code
+     * new FlociAzContainer()
+     *     .withQueueConfig(c -> c.enabled(false));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link QueueConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociAzContainer withQueueConfig(Consumer<QueueConfig.Builder> configurer) {
+        return updateServiceConfig(queueConfig, configurer);
+    }
+
+    /**
+     * Returns the Azure Table Storage configuration.
+     *
+     * @return the Table Storage configuration
+     */
+    public TableConfig getTableConfig() {
+        return tableConfig.get();
+    }
+
+    /**
+     * Configures Azure Table Storage.
+     *
+     * <pre>{@code
+     * new FlociAzContainer()
+     *     .withTableConfig(c -> c.enabled(false));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link TableConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociAzContainer withTableConfig(Consumer<TableConfig.Builder> configurer) {
+        return updateServiceConfig(tableConfig, configurer);
+    }
+
+    /**
+     * Returns the Azure App Configuration configuration.
+     *
+     * @return the App Configuration configuration
+     */
+    public AppConfigConfig getAppConfigConfig() {
+        return appConfigConfig.get();
+    }
+
+    /**
+     * Configures Azure App Configuration.
+     *
+     * <pre>{@code
+     * new FlociAzContainer()
+     *     .withAppConfigConfig(c -> c.enabled(false));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link AppConfigConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociAzContainer withAppConfigConfig(Consumer<AppConfigConfig.Builder> configurer) {
+        return updateServiceConfig(appConfigConfig, configurer);
+    }
+
+    /**
+     * Returns the Azure Communication Services Email configuration.
+     *
+     * @return the Email configuration
+     */
+    public EmailConfig getEmailConfig() {
+        return emailConfig.get();
+    }
+
+    /**
+     * Configures Azure Communication Services Email.
+     *
+     * <pre>{@code
+     * new FlociAzContainer()
+     *     .withEmailConfig(c -> c.enabled(false));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link EmailConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociAzContainer withEmailConfig(Consumer<EmailConfig.Builder> configurer) {
+        return updateServiceConfig(emailConfig, configurer);
     }
 }
