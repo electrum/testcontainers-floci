@@ -131,6 +131,13 @@ class FlociAzContainerServicesConfigTest {
                 "FLOCI_AZ_SERVICES_POSTGRES_MOCKED", "true");
     }
     @Test
+    void shouldWireMySqlConfigIntoContainer() {
+        assertConfigWired(
+                c -> c.withMySqlConfig(cfg -> cfg.mocked(true)),
+                c -> c.getMySqlConfig().isMocked(), true,
+                "FLOCI_AZ_SERVICES_MYSQL_MOCKED", "true");
+    }
+    @Test
     void shouldWireApimConfigIntoContainer() {
         assertConfigWired(
                 c -> c.withApimConfig(cfg -> cfg.enabled(false)),

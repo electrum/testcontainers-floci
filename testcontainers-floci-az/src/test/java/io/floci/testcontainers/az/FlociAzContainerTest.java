@@ -72,6 +72,7 @@ class FlociAzContainerTest {
                     container.getEventHubConfig(),
                     container.getSqlConfig(),
                     container.getPostgresConfig(),
+                    container.getMySqlConfig(),
                     container.getApimConfig(),
                     container.getMonitorConfig(),
                     container.getGraphConfig(),

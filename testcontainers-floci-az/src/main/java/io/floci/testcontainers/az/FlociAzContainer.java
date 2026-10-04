@@ -73,6 +73,7 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     private final ServiceConfigRef<EventHubConfig> eventHubConfig = registerServiceConfig(EventHubConfig.builder().build());
     private final ServiceConfigRef<SqlConfig> sqlConfig = registerServiceConfig(SqlConfig.builder().build());
     private final ServiceConfigRef<PostgresConfig> postgresConfig = registerServiceConfig(PostgresConfig.builder().build());
+    private final ServiceConfigRef<MySqlConfig> mySqlConfig = registerServiceConfig(MySqlConfig.builder().build());
     private final ServiceConfigRef<ApimConfig> apimConfig = registerServiceConfig(ApimConfig.builder().build());
     private final ServiceConfigRef<MonitorConfig> monitorConfig = registerServiceConfig(MonitorConfig.builder().build());
     private final ServiceConfigRef<GraphConfig> graphConfig = registerServiceConfig(GraphConfig.builder().build());
@@ -535,6 +536,29 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
      */
     public FlociAzContainer withPostgresConfig(Consumer<PostgresConfig.Builder> configurer) {
         return updateServiceConfig(postgresConfig, configurer);
+    }
+    /**
+     * Returns the Azure Database for MySQL configuration.
+     *
+     * @return the MySQL configuration
+     */
+    public MySqlConfig getMySqlConfig() {
+        return mySqlConfig.get();
+    }
+
+    /**
+     * Configures Azure Database for MySQL, which spawns sibling containers and therefore requires the Docker socket unless mocked.
+     *
+     * <pre>{@code
+     * new FlociAzContainer()
+     *     .withMySqlConfig(c -> c.mocked(true));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link MySqlConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociAzContainer withMySqlConfig(Consumer<MySqlConfig.Builder> configurer) {
+        return updateServiceConfig(mySqlConfig, configurer);
     }
     /**
      * Returns the Azure API Management configuration.
