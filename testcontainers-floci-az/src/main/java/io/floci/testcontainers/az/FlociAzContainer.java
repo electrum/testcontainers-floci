@@ -85,6 +85,7 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     private final ServiceConfigRef<MonitorConfig> monitorConfig = registerServiceConfig(MonitorConfig.builder().build());
     private final ServiceConfigRef<EntraConfig> entraConfig = registerServiceConfig(EntraConfig.builder().build());
     private final ServiceConfigRef<GraphConfig> graphConfig = registerServiceConfig(GraphConfig.builder().build());
+    private final ServiceConfigRef<ArmConfig> armConfig = registerServiceConfig(ArmConfig.builder().build());
     private final ServiceConfigRef<NetworkConfig> networkConfig = registerServiceConfig(NetworkConfig.builder().build());
     private final ServiceConfigRef<EmailConfig> emailConfig = registerServiceConfig(EmailConfig.builder().build());
 
@@ -124,6 +125,17 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     protected void applyGlobalEnvVars() {
         tlsConfig.applyEnvVarsToContainer(this);
         authConfig.applyEnvVarsToContainer(this);
+    }
+
+    /**
+     * Returns the id of the default subscription, as configured via
+     * {@link ArmConfig.Builder#defaultSubscriptionId(String)}. It is the subscription {@code GET /subscriptions}
+     * lists; other subscription ids are accepted as well.
+     *
+     * @return the default subscription id
+     */
+    public String getSubscriptionId() {
+        return getArmConfig().getDefaultSubscriptionId();
     }
 
     /**
@@ -831,6 +843,29 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
      */
     public FlociAzContainer withGraphConfig(Consumer<GraphConfig.Builder> configurer) {
         return updateServiceConfig(graphConfig, configurer);
+    }
+    /**
+     * Returns the Azure Resource Manager (ARM) configuration.
+     *
+     * @return the ARM configuration
+     */
+    public ArmConfig getArmConfig() {
+        return armConfig.get();
+    }
+
+    /**
+     * Configures Azure Resource Manager (ARM).
+     *
+     * <pre>{@code
+     * new FlociAzContainer()
+     *     .withArmConfig(c -> c.defaultSubscriptionId("22222222-2222-2222-2222-222222222222"));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link ArmConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociAzContainer withArmConfig(Consumer<ArmConfig.Builder> configurer) {
+        return updateServiceConfig(armConfig, configurer);
     }
     /**
      * Returns the Azure Virtual Network configuration.

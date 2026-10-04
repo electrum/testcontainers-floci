@@ -58,6 +58,17 @@ class FlociAzContainerTest {
     }
 
     @Test
+    void shouldReturnSubscriptionIdOfArmConfig() {
+        try (FlociAzContainer container = new FlociAzContainer()) {
+            assertThat(container.getSubscriptionId()).isEqualTo("00000000-0000-0000-0000-000000000001");
+
+            container.withArmConfig(c -> c.defaultSubscriptionId("22222222-2222-2222-2222-222222222222"));
+
+            assertThat(container.getSubscriptionId()).isEqualTo("22222222-2222-2222-2222-222222222222");
+        }
+    }
+
+    @Test
     void shouldReturnTenantIdOfEntraConfig() {
         try (FlociAzContainer container = new FlociAzContainer()) {
             assertThat(container.getTenantId()).isEqualTo("00000000-0000-0000-0000-000000000002");
@@ -95,6 +106,7 @@ class FlociAzContainerTest {
                     container.getMonitorConfig(),
                     container.getEntraConfig(),
                     container.getGraphConfig(),
+                    container.getArmConfig(),
                     container.getNetworkConfig(),
                     container.getEmailConfig()
             )).noneMatch(AbstractServiceConfig::isEnabled);

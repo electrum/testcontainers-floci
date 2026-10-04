@@ -215,6 +215,13 @@ class FlociAzContainerServicesConfigTest {
                 "FLOCI_AZ_SERVICES_GRAPH_ENABLED", "false");
     }
     @Test
+    void shouldWireArmConfigIntoContainer() {
+        assertConfigWired(
+                c -> c.withArmConfig(cfg -> cfg.defaultSubscriptionId("22222222-2222-2222-2222-222222222222")),
+                c -> c.getArmConfig().getDefaultSubscriptionId(), "22222222-2222-2222-2222-222222222222",
+                "FLOCI_AZ_SERVICES_ARM_DEFAULT_SUBSCRIPTION_ID", "22222222-2222-2222-2222-222222222222");
+    }
+    @Test
     void shouldWireNetworkConfigIntoContainer() {
         assertConfigWired(
                 c -> c.withNetworkConfig(cfg -> cfg.enabled(false)),
