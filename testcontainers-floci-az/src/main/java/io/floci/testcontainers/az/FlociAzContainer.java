@@ -74,6 +74,7 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     private final ServiceConfigRef<SqlConfig> sqlConfig = registerServiceConfig(SqlConfig.builder().build());
     private final ServiceConfigRef<PostgresConfig> postgresConfig = registerServiceConfig(PostgresConfig.builder().build());
     private final ServiceConfigRef<MySqlConfig> mySqlConfig = registerServiceConfig(MySqlConfig.builder().build());
+    private final ServiceConfigRef<MariaDbConfig> mariaDbConfig = registerServiceConfig(MariaDbConfig.builder().build());
     private final ServiceConfigRef<ApimConfig> apimConfig = registerServiceConfig(ApimConfig.builder().build());
     private final ServiceConfigRef<MonitorConfig> monitorConfig = registerServiceConfig(MonitorConfig.builder().build());
     private final ServiceConfigRef<GraphConfig> graphConfig = registerServiceConfig(GraphConfig.builder().build());
@@ -559,6 +560,29 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
      */
     public FlociAzContainer withMySqlConfig(Consumer<MySqlConfig.Builder> configurer) {
         return updateServiceConfig(mySqlConfig, configurer);
+    }
+    /**
+     * Returns the Azure Database for MariaDB configuration.
+     *
+     * @return the MariaDB configuration
+     */
+    public MariaDbConfig getMariaDbConfig() {
+        return mariaDbConfig.get();
+    }
+
+    /**
+     * Configures Azure Database for MariaDB, which spawns sibling containers and therefore requires the Docker socket unless mocked.
+     *
+     * <pre>{@code
+     * new FlociAzContainer()
+     *     .withMariaDbConfig(c -> c.mocked(true));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link MariaDbConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociAzContainer withMariaDbConfig(Consumer<MariaDbConfig.Builder> configurer) {
+        return updateServiceConfig(mariaDbConfig, configurer);
     }
     /**
      * Returns the Azure API Management configuration.

@@ -138,6 +138,13 @@ class FlociAzContainerServicesConfigTest {
                 "FLOCI_AZ_SERVICES_MYSQL_MOCKED", "true");
     }
     @Test
+    void shouldWireMariaDbConfigIntoContainer() {
+        assertConfigWired(
+                c -> c.withMariaDbConfig(cfg -> cfg.mocked(true)),
+                c -> c.getMariaDbConfig().isMocked(), true,
+                "FLOCI_AZ_SERVICES_MARIA_DB_MOCKED", "true");
+    }
+    @Test
     void shouldWireApimConfigIntoContainer() {
         assertConfigWired(
                 c -> c.withApimConfig(cfg -> cfg.enabled(false)),
