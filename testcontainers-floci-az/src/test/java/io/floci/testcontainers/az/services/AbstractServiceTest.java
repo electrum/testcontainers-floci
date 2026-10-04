@@ -37,7 +37,7 @@ abstract class AbstractServiceTest {
 
     // Integration tests run against the nightly build so newly added services are covered
     // before they land in a versioned release.
-    private static final String NIGHTLY_IMAGE = "floci/floci-az:nightly";
+    protected static final String NIGHTLY_IMAGE = "floci/floci-az:nightly";
 
     private static final boolean DEBUG_LOGGING = false;
 
@@ -127,7 +127,14 @@ abstract class AbstractServiceTest {
      * @param body   the JSON request body, or {@code null} for none
      */
     protected static RestResponse rest(String method, String path, String body) {
-        java.net.http.HttpRequest.Builder request = java.net.http.HttpRequest.newBuilder(URI.create(floci.getEndpoint() + path))
+        return rest(floci, method, path, body);
+    }
+
+    /**
+     * Same as {@link #rest(String, String, String)}, but against the given container instead of the shared one.
+     */
+    protected static RestResponse rest(FlociAzContainer container, String method, String path, String body) {
+        java.net.http.HttpRequest.Builder request = java.net.http.HttpRequest.newBuilder(URI.create(container.getEndpoint() + path))
                 .header("Authorization", "Bearer test-token");
         if (body != null) {
             request.header("Content-Type", "application/json")

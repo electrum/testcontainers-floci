@@ -74,6 +74,13 @@ class FlociAzContainerServicesConfigTest {
     }
 
     @Test
+    void shouldWireFunctionsConfigIntoContainer() {
+        assertConfigWired(
+                c -> c.withFunctionsConfig(cfg -> cfg.mocked(true)),
+                c -> c.getFunctionsConfig().isMocked(), true,
+                "FLOCI_AZ_SERVICES_FUNCTIONS_MOCKED", "true");
+    }
+    @Test
     void shouldWireAppConfigConfigIntoContainer() {
         assertConfigWired(
                 c -> c.withAppConfigConfig(cfg -> cfg.enabled(false)),

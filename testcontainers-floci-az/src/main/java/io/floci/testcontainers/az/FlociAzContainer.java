@@ -65,6 +65,7 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     private final ServiceConfigRef<BlobConfig> blobConfig = registerServiceConfig(BlobConfig.builder().build());
     private final ServiceConfigRef<QueueConfig> queueConfig = registerServiceConfig(QueueConfig.builder().build());
     private final ServiceConfigRef<TableConfig> tableConfig = registerServiceConfig(TableConfig.builder().build());
+    private final ServiceConfigRef<FunctionsConfig> functionsConfig = registerServiceConfig(FunctionsConfig.builder().build());
     private final ServiceConfigRef<AppConfigConfig> appConfigConfig = registerServiceConfig(AppConfigConfig.builder().build());
     private final ServiceConfigRef<KeyVaultConfig> keyVaultConfig = registerServiceConfig(KeyVaultConfig.builder().build());
     private final ServiceConfigRef<ApimConfig> apimConfig = registerServiceConfig(ApimConfig.builder().build());
@@ -345,6 +346,29 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
         return updateServiceConfig(tableConfig, configurer);
     }
 
+    /**
+     * Returns the Azure Functions configuration.
+     *
+     * @return the Functions configuration
+     */
+    public FunctionsConfig getFunctionsConfig() {
+        return functionsConfig.get();
+    }
+
+    /**
+     * Configures Azure Functions, which runs functions in sibling containers and therefore requires the Docker socket unless mocked.
+     *
+     * <pre>{@code
+     * new FlociAzContainer()
+     *     .withFunctionsConfig(c -> c.mocked(true));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link FunctionsConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociAzContainer withFunctionsConfig(Consumer<FunctionsConfig.Builder> configurer) {
+        return updateServiceConfig(functionsConfig, configurer);
+    }
     /**
      * Returns the Azure App Configuration configuration.
      *
