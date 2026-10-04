@@ -79,6 +79,7 @@ class FlociAzContainerTest {
                     container.getAciConfig(),
                     container.getVmConfig(),
                     container.getApimConfig(),
+                    container.getRedisConfig(),
                     container.getMonitorConfig(),
                     container.getGraphConfig(),
                     container.getNetworkConfig(),

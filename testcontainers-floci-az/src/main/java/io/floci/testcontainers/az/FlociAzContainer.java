@@ -80,6 +80,7 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     private final ServiceConfigRef<AciConfig> aciConfig = registerServiceConfig(AciConfig.builder().build());
     private final ServiceConfigRef<VmConfig> vmConfig = registerServiceConfig(VmConfig.builder().build());
     private final ServiceConfigRef<ApimConfig> apimConfig = registerServiceConfig(ApimConfig.builder().build());
+    private final ServiceConfigRef<RedisConfig> redisConfig = registerServiceConfig(RedisConfig.builder().build());
     private final ServiceConfigRef<MonitorConfig> monitorConfig = registerServiceConfig(MonitorConfig.builder().build());
     private final ServiceConfigRef<GraphConfig> graphConfig = registerServiceConfig(GraphConfig.builder().build());
     private final ServiceConfigRef<NetworkConfig> networkConfig = registerServiceConfig(NetworkConfig.builder().build());
@@ -702,6 +703,29 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
      */
     public FlociAzContainer withApimConfig(Consumer<ApimConfig.Builder> configurer) {
         return updateServiceConfig(apimConfig, configurer);
+    }
+    /**
+     * Returns the Azure Cache for Redis configuration.
+     *
+     * @return the Redis configuration
+     */
+    public RedisConfig getRedisConfig() {
+        return redisConfig.get();
+    }
+
+    /**
+     * Configures Azure Cache for Redis, which runs caches in sibling containers and therefore requires the Docker socket unless mocked.
+     *
+     * <pre>{@code
+     * new FlociAzContainer()
+     *     .withRedisConfig(c -> c.mocked(true));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link RedisConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociAzContainer withRedisConfig(Consumer<RedisConfig.Builder> configurer) {
+        return updateServiceConfig(redisConfig, configurer);
     }
     /**
      * Returns the Azure Monitor / Log Analytics configuration.
