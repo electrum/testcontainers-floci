@@ -68,6 +68,7 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
     private final ServiceConfigRef<FunctionsConfig> functionsConfig = registerServiceConfig(FunctionsConfig.builder().build());
     private final ServiceConfigRef<AppConfigConfig> appConfigConfig = registerServiceConfig(AppConfigConfig.builder().build());
     private final ServiceConfigRef<SignalRConfig> signalRConfig = registerServiceConfig(SignalRConfig.builder().build());
+    private final ServiceConfigRef<CosmosConfig> cosmosConfig = registerServiceConfig(CosmosConfig.builder().build());
     private final ServiceConfigRef<KeyVaultConfig> keyVaultConfig = registerServiceConfig(KeyVaultConfig.builder().build());
     private final ServiceConfigRef<ApimConfig> apimConfig = registerServiceConfig(ApimConfig.builder().build());
     private final ServiceConfigRef<MonitorConfig> monitorConfig = registerServiceConfig(MonitorConfig.builder().build());
@@ -416,6 +417,29 @@ public class FlociAzContainer extends AbstractFlociContainer<FlociAzContainer> {
      */
     public FlociAzContainer withSignalRConfig(Consumer<SignalRConfig.Builder> configurer) {
         return updateServiceConfig(signalRConfig, configurer);
+    }
+    /**
+     * Returns the Azure Cosmos DB configuration.
+     *
+     * @return the Cosmos DB configuration
+     */
+    public CosmosConfig getCosmosConfig() {
+        return cosmosConfig.get();
+    }
+
+    /**
+     * Configures Azure Cosmos DB, whose Docker-backed API engines (MongoDB, PostgreSQL, Cassandra, Gremlin) require the Docker socket.
+     *
+     * <pre>{@code
+     * new FlociAzContainer()
+     *     .withCosmosConfig(c -> c.mongodb(api -> api.enabled(true)));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link CosmosConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociAzContainer withCosmosConfig(Consumer<CosmosConfig.Builder> configurer) {
+        return updateServiceConfig(cosmosConfig, configurer);
     }
     /**
      * Returns the Azure Key Vault configuration.

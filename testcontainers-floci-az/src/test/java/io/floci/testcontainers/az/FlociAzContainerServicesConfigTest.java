@@ -96,6 +96,13 @@ class FlociAzContainerServicesConfigTest {
                 "FLOCI_AZ_SERVICES_SIGNALR_ACCESS_KEY", "bXktc2lnbmFsci1rZXk=");
     }
     @Test
+    void shouldWireCosmosConfigIntoContainer() {
+        assertConfigWired(
+                c -> c.withCosmosConfig(cfg -> cfg.mongodb(api -> api.enabled(true))),
+                c -> c.getCosmosConfig().getMongodb().isEnabled(), true,
+                "FLOCI_AZ_SERVICES_COSMOS_ENGINES_MONGODB_ENABLED", "true");
+    }
+    @Test
     void shouldWireKeyVaultConfigIntoContainer() {
         assertConfigWired(
                 c -> c.withKeyVaultConfig(cfg -> cfg.enabled(false)),
