@@ -124,6 +124,13 @@ class FlociAzContainerServicesConfigTest {
                 "FLOCI_AZ_SERVICES_SQL_ACCEPT_EULA", "Y");
     }
     @Test
+    void shouldWirePostgresConfigIntoContainer() {
+        assertConfigWired(
+                c -> c.withPostgresConfig(cfg -> cfg.mocked(true)),
+                c -> c.getPostgresConfig().isMocked(), true,
+                "FLOCI_AZ_SERVICES_POSTGRES_MOCKED", "true");
+    }
+    @Test
     void shouldWireApimConfigIntoContainer() {
         assertConfigWired(
                 c -> c.withApimConfig(cfg -> cfg.enabled(false)),
